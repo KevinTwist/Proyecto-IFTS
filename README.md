@@ -29,7 +29,8 @@ El backend está desarrollado en **Node.js** con **Express** siguiendo una arqui
 
 ## 📁 Estructura del Proyecto
 
-gestion-turnos/
+```text
+   gestion-turnos/
 ├── BackEnd/
 │   ├── routes/          # Endpoints de la API
 │   ├── controllers/     # Controladores HTTP
@@ -48,6 +49,7 @@ gestion-turnos/
 │   └── package.json     # Dependencias del frontend
 ├── .gitignore
 └── README.md
+```
 
 ---
 
