@@ -1,6 +1,6 @@
 const express = require('express');
 const { conectarDB } = require('./database/conexion');
-const backendRouter = require('.routers/backendRouter');
+const backendRouter = require('./routers/backendRouter');
 const app = express();
 
 const PUERTO = 3000;

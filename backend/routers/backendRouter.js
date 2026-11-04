@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { conectarDB } = require('./database/conexion');
+const { conectarDB } = require('../database/conexion');
 
 router.get('/', (req, res) => {
     res.status(200)
