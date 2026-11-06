@@ -3,7 +3,7 @@ const { conectarDB } = require('./database/conexion');
 
 const disponibilidadRouter = require('./routers/disponibilidadRouter');
 const backendRouter = require('./routers/backendRouter');
-// const turnoRouter = require('./routers/turnoRouter');
+const turnoRouter = require('./routers/turnoRouter');
 
 const app = express();
 
@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use('/api/test-conexion', backendRouter);
 app.use('/api/disponibilidades', disponibilidadRouter);
-// app.use('/api/turnos', turnoRouter);
+app.use('/api/turnos', turnoRouter);
 
 const PUERTO = 3000;
 const HOST = '127.0.0.1';
