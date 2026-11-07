@@ -1,0 +1,12 @@
+GET http://127.0.0.1:3000/api/disponibilidades
+
+###
+
+POST http://127.0.0.1:3000/api/turnos
+Content-Type: application/json
+
+{
+  "nombre": "Ana",
+  "apellido": "López",
+  "id_disponibilidad": 3
+}
