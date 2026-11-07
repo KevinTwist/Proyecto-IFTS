@@ -1,5 +1,21 @@
 const turnoService = require('../services/turnoService');
 
+exports.crearTurno = async (req, res) => {
+    try {
+        const datosTurno = req.body;
+        const nuevoTurno = await turnoService.crearTurno(datosTurno);
+
+        res.status(201).json({
+            mensaje: 'Turno creado con éxito',
+            turno: nuevoTurno
+        });
+
+    } catch (error) {
+        console.log('Error en turnoController:', error);
+        res.status(500).json({ mensaje: 'Error al crear el turno' });
+    }
+};
+
 exports.leerTurnos = async (req, res) => {
     try {
         const resultado = await turnoService.leerTurnos();
