@@ -3,6 +3,8 @@ const turnoController = require('../controllers/turnoController');
 
 const router = express.Router();
 
+router.post('/', turnoController.crearTurno);
+
 router.get('/', turnoController.leerTurnos);
 router.get('/:codigoTurno', turnoController.buscarTurnos);
 router.delete('/:turnoId', turnoController.eliminarTurno);
