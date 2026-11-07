@@ -6,8 +6,14 @@ exports.leerTurnos = async () => {
     return turnos;
 };
 
-exports.buscarTurnos = async (codigo) => {
-    const turno = await turnoRepository.buscarTurnos(codigo);
+exports.buscarTurno = async (turnoId) => {
+    const turno = await turnoRepository.buscarTurno(turnoId);
 
     return turno;
+};
+
+exports.eliminarTurno = async (turnoId) => {
+    const filasEliminadas = await turnoRepository.eliminarTurno(turnoId);
+
+    return filasEliminadas;
 };

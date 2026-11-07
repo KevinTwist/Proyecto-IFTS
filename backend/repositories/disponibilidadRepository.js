@@ -4,24 +4,18 @@ exports.obtenerDisponibilidades = async () => {
     try {
         const pool = await conectarDB();
 
-        const resultado = await pool.request().query(
-            'SELECT * FROM Disponibilidades'
-        );
+        // Formateamos en SQL para respetar la hora tal cual está guardada,
+        // sin que el driver la interprete como UTC y reste la zona horaria.
+        const resultado = await pool.request().query(`
+            SELECT
+                id_disponibilidad,
+                date_disponible,
+                CONVERT(varchar(10), date_disponible, 23) AS FECHA,
+                CONVERT(varchar(5), date_disponible, 108) AS HORA
+            FROM disponibilidad
+        `);
 
-        // Mapeamos los resultados para limpiar el formato de fecha y hora
-        const disponibilidadesFormateadas = resultado.recordset.map(item => {
-            return {
-                ...item,
-                // Si FECHA existe, extraemos solo la parte de la fecha (YYYY-MM-DD)
-                FECHA: item.FECHA ? item.FECHA.toISOString().split('T')[0] : null,
-                
-                // Si HORA existe, extraemos solo la parte de la hora (HH:mm)
-                // (Asumiendo que SQL te devuelve un objeto Date para la hora)
-                HORA: item.HORA ? item.HORA.toISOString().split('T')[1].substring(0, 5) : null
-            };
-        });
-
-        return disponibilidadesFormateadas;
+        return resultado.recordset;
 
     } catch (error) {
         console.log('Error al obtener las disponibilidades:', error);
