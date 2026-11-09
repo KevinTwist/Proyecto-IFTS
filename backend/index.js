@@ -5,20 +5,19 @@ const { conectarDB } = require('./database/conexion');
 const disponibilidadRouter = require('./routers/disponibilidadRouter');
 const backendRouter = require('./routers/backendRouter');
 const turnoRouter = require('./routers/turnoRouter');
+const eliminarTurno = require('./database/queries');
+const router = require('./routers/disponibilidadRouter');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    console.log("Accediendo a '/'");
-    res.send('<h1>¡Bienvenido al servidor del proyecto TurnoExpress!</h1>');
-});
-
+app.use('/', backendRouter);
 app.use('/api', backendRouter);
 app.use('/api/disponibilidades', disponibilidadRouter);
 app.use('/api/turnos', turnoRouter);
+
 
 const PUERTO = 3000;
 const HOST = '127.0.0.1';

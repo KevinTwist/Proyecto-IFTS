@@ -28,11 +28,11 @@ exports.leerTurnos = async (req, res) => {
     }
 };
 
-exports.buscarTurnos = async (req, res) => {
+exports.buscarTurno = async (req, res) => {
     try {
         const codigoParam = req.params.codigoTurno;
 
-        const codigoFiltered = await turnoService.buscarTurnos(codigoParam);
+        const codigoFiltered = await turnoService.buscarTurno(codigoParam);
 
         if (codigoFiltered.length === 0) {
             return res.status(404).send(`No se encontró el codigoTurno: ${codigoParam}`);
