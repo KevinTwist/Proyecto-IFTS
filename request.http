@@ -1,6 +1,9 @@
 ### Ver las disponibilidades 
 GET http://127.0.0.1:3000/api/disponibilidades
 
+### Eliminar una disponibilidad por id
+DELETE http://127.0.0.1:3000/api/disponibilidades/delete/3
+
 ###Crear turnos
 POST http://127.0.0.1:3000/api/turnos
 Content-Type: application/json
@@ -26,6 +29,4 @@ Content-Type: application/json
 {
     "nombre": "Norberto Gonzalez",
     "idDisponibilidad": 8 
-
 }
-

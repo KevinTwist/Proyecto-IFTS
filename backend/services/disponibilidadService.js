@@ -18,3 +18,16 @@ exports.crearDisponibilidad = async (disponibilidad) => {
     }
 
 };
+
+exports.eliminarDisponibilidad = async (id) => {
+
+    try {
+        const filasEliminadas = await disponibilidadRepository.eliminarDisponibilidad(id);
+        return filasEliminadas;
+
+    } catch (error) {
+        console.log('Error en disponibilidadService:', error);
+        throw error;
+    }
+
+};
