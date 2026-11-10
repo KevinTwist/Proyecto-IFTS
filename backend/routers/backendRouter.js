@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
     res.send('<h1>¡Bienvenido al servidor del proyecto TurnoExpress!</h1>');
 })
 
-router.get('/api/test-conexion', async (req, res) => {
+router.get('/test-conexion', async (req, res) => {
     try {
         const pool = await conectarDB();
         const resultado = await pool.request().query('SELECT GETDATE() AS FechaActual');

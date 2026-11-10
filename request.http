@@ -1,0 +1,15 @@
+### Ver las disponibilidades 
+GET http://127.0.0.1:3000/api/disponibilidades
+
+###Crear turnos
+POST http://127.0.0.1:3000/api/turnos
+Content-Type: application/json
+
+{
+  "nombre": "Ana",
+  "apellido": "López",
+  "id_disponibilidad": 3
+}
+
+### Eliminar un turno por ID
+DELETE http://127.0.0.1:3000/api/turnos/1

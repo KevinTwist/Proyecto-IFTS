@@ -5,5 +5,6 @@ const queryBaseSelect = 'SELECT * FROM turnos'
 
 module.exports = {
     leerTurnos: queryBaseSelect,
-    buscarTurnos: `${queryBaseSelect} WHERE codigo = @codigo`,
+    buscarTurno: `${queryBaseSelect} WHERE codigo = @codigo`,
+    eliminarTurno: 'DELETE FROM turnos WHERE codigo = @codigo',
 };
