@@ -1,79 +1,118 @@
-<section class="panel">
-  <h1>Reservá tu turno</h1>
-  <p class="subtitulo">Elegí un horario disponible para reservar tu turno.</p>
+<div class="cliente-container">
+  <header class="header-sistema">
+    <div>
+      <h2>¿Buscás un turno?</h2>
+      <p>Seleccioná una fecha y un horario para reservar.</p>
+    </div>
+  </header>
 
-  @if (turnoReservado(); as turno) {
-    <article class="exito">
-      <h2>¡Turno reservado!</h2>
-      <p>
-        Tu código es: <strong>{{ turno.codigo }}</strong>
-      </p>
-      <p>
-        Fecha: <strong>{{ turno.fecha }} · {{ turno.hora }}</strong>
-      </p>
-      <p class="nota">Guardá el código: con él podés consultar o cancelar tu turno.</p>
-      <button type="button" class="btn" (click)="reservarOtro()">Reservar otro turno</button>
-    </article>
-  }
+  @if (!codigoTurnoCreado() && !mostrarFormularioDatos()) {
+    <div class="seccion-calendario">
+      <h3>Seleccionar fecha</h3>
 
-  @if (cargando()) {
-    <p class="estado">Cargando horarios…</p>
-  } @else if (errorCarga(); as error) {
-    <p class="estado error">{{ error }}</p>
-    <button type="button" class="btn" (click)="cargarDisponibilidades()">Reintentar</button>
-  } @else if (disponibilidades().length === 0) {
-    <p class="estado">No hay horarios disponibles por ahora.</p>
-  } @else {
-    <ul class="lista">
-      @for (disponibilidad of disponibilidades(); track disponibilidad.id_disponibilidad) {
-        <li class="item">
-          <span class="horario">{{ disponibilidad.fecha }} · {{ disponibilidad.hora }}</span>
-          <button
-            type="button"
-            class="btn"
-            [class.activo]="seleccion()?.id_disponibilidad === disponibilidad.id_disponibilidad"
-            (click)="seleccionar(disponibilidad)"
-          >
-            Reservar
-          </button>
-        </li>
+      <div class="calendario-box">
+        <div class="calendario-header">
+          <button type="button" class="btn-mes" (click)="mesAnterior()">&lt;</button>
+          <span>{{ mesAnioActual() }}</span>
+          <button type="button" class="btn-mes" (click)="mesSiguiente()">&gt;</button>
+        </div>
+        <div class="calendario-grid-dias">
+          <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+
+          @for (celda of celdasCalendario(); track $index) {
+            @if (celda === null) {
+              <span class="dia-vacio"></span>
+            } @else {
+              <button
+                type="button"
+                class="dia"
+                [class.selected]="diaSeleccionado() === celda"
+                (click)="seleccionarDia(celda)"
+              >
+                {{ celda }}
+              </button>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="seccion-horarios">
+      <h3>Horarios disponibles</h3>
+      @if (cargando()) {
+        <p class="no-horarios">Cargando horarios…</p>
+      } @else if (horariosDelDia().length > 0) {
+        <div class="grid-horarios">
+          @for (item of horariosDelDia(); track item.id_disponibilidad) {
+            <button
+              type="button"
+              class="btn-horario"
+              [class.selected]="horarioSeleccionado()?.id_disponibilidad === item.id_disponibilidad"
+              (click)="seleccionarTurno(item)"
+            >
+              {{ item.hora }}
+            </button>
+          }
+        </div>
+      } @else {
+        <p class="no-horarios">No hay horarios disponibles para esta fecha.</p>
       }
-    </ul>
+    </div>
+
+    <button
+      type="button"
+      class="btn-confirmar-principal"
+      [disabled]="!horarioSeleccionado()"
+      (click)="irAFormularioDatos()"
+    >
+      Confirmar turno
+    </button>
   }
 
-  @if (errorReserva(); as error) {
-    <p class="estado error">{{ error }}</p>
-  }
-
-  @if (seleccion(); as elegida) {
-    <section class="reserva">
-      <h2>Tus datos</h2>
-      <p>
-        Horario elegido: <strong>{{ elegida.fecha }} · {{ elegida.hora }}</strong>
-        <button type="button" class="enlace" (click)="cancelarSeleccion()">cambiar horario</button>
+  @if (mostrarFormularioDatos() && !codigoTurnoCreado()) {
+    <div class="modal-datos">
+      <h3>Ingresá tus datos para finalizar</h3>
+      <p class="detalle-seleccion">
+        Horario elegido: <strong>{{ fechaSeleccionada() }} - {{ horarioSeleccionado()?.hora }}</strong>
       </p>
 
-      <form [formGroup]="formulario" (ngSubmit)="confirmarReserva()">
-        <label>
-          Nombre
-          <input type="text" formControlName="nombre" />
-        </label>
-        @if (formulario.controls.nombre.hasError('required') && formulario.controls.nombre.touched) {
-          <p class="campo-error">Ingresá tu nombre.</p>
-        }
+      <div class="form-group">
+        <label for="nombre">Nombre y Apellido (máx. 20 car.)</label>
+        <input
+          id="nombre"
+          type="text"
+          [ngModel]="nombreCliente()"
+          (ngModelChange)="nombreCliente.set($event)"
+          placeholder="Ej: Juan Pérez"
+          maxlength="20"
+        />
+      </div>
 
-        <label>
-          Apellido
-          <input type="text" formControlName="apellido" />
-        </label>
-        @if (formulario.controls.apellido.hasError('required') && formulario.controls.apellido.touched) {
-          <p class="campo-error">Ingresá tu apellido.</p>
-        }
-
-        <button type="submit" class="btn principal" [disabled]="enviando()">
-          {{ enviando() ? 'Reservando…' : 'Confirmar reserva' }}
+      <div class="botones-modal">
+        <button type="button" class="btn-secundario" (click)="volverASeleccion()">Volver</button>
+        <button
+          type="button"
+          class="btn-primario"
+          [disabled]="enviando()"
+          (click)="confirmarTurnoFinal()"
+        >
+          {{ enviando() ? 'Reservando…' : 'Reservar ahora' }}
         </button>
-      </form>
-    </section>
+      </div>
+    </div>
   }
-</section>
+
+  @if (codigoTurnoCreado()) {
+    <div class="confirmacion-box">
+      <h3>Turno reservado con éxito</h3>
+      <p>Código de tu turno:</p>
+      <div class="codigo-destacado">
+        <strong>{{ codigoTurnoCreado() }}</strong>
+      </div>
+      <button type="button" class="btn-primario" (click)="reiniciarFlujo()">Sacar otro turno</button>
+    </div>
+  }
+
+  @if (mensajeEstado()) {
+    <p class="mensaje">{{ mensajeEstado() }}</p>
+  }
