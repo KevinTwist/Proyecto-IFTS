@@ -22,16 +22,6 @@ CREATE TABLE turnos (
 );
 GO
 
-
-CREATE TABLE disponibilidad(
-    -- ID único para cada hueco horario que crea el administrador
-    id_disponibilidad INT IDENTITY(1,1) PRIMARY KEY,
-    
-    -- Fecha y hora del turno (ej: '2026-11-10 09:00:00')
-    date_disponible   DATETIME2 NOT NULL
-);
-GO
-
 CREATE UNIQUE INDEX turno_disponibilidad_act
 ON turnos(id_disponibilidad);
 GO
