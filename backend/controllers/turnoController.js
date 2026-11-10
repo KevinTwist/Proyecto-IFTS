@@ -12,6 +12,21 @@ exports.crearTurno = async (req, res) => {
 
     } catch (error) {
         console.log('Error en turnoController:', error);
+
+        if (error.number === 547 || error.message.includes('FOREIGN KEY')) {
+            return res.status(404).json({ 
+                mensaje: 'El horario seleccionado no existe.' 
+            });
+        }
+        
+        if (error.message.includes('UNIQUE') || error.number === 2601 || error.code === 'EREQUEST') {
+            return res.status(409).json({ 
+                mensaje: 'Este horario fue reservado por otro cliente.' 
+            });
+        }
+
+         
+
         res.status(500).json({ mensaje: 'Error al crear el turno' });
     }
 };
