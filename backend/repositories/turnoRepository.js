@@ -2,17 +2,14 @@ const sql = require('mssql');
 const { conectarDB } = require('../database/conexion');
 const queries = require('../database/queries');
 
-exports.crearTurno = async (datosTurno) => {
+exports.crearTurno = async (codigo, nombre, idDisponibilidad) => {
     try {
         const pool = await conectarDB();
-
-        const codigo = Math.random().toString(36).slice(2, 8).toUpperCase().padEnd(6, '0');
-        const nombre = `${datosTurno.nombre ?? ''} ${datosTurno.apellido ?? ''}`.trim();
 
         const resultado = await pool.request()
             .input('codigo', sql.NVarChar(10), codigo)
             .input('nombre', sql.NVarChar(20), nombre)
-            .input('idDisponibilidad', sql.Int, datosTurno.id_disponibilidad)
+            .input('idDisponibilidad', sql.Int, idDisponibilidad)
             .query(
                 queries.crearTurno
             );
@@ -21,7 +18,7 @@ exports.crearTurno = async (datosTurno) => {
             turno_id: resultado.recordset[0]?.turno_id,
             codigo,
             nombre,
-            id_disponibilidad: datosTurno.id_disponibilidad
+            id_disponibilidad: idDisponibilidad
         };
 
     } catch (error) {

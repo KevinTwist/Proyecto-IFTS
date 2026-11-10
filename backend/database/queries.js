@@ -9,7 +9,7 @@ const queryDisponibilidadesLibres = `SELECT
 
 module.exports = {
     leerTurnos: queryBaseSelect,
-    buscarTurnos: `${queryBaseSelect} WHERE codigo = @codigo`,
+    buscarTurno: `${queryBaseSelect} WHERE codigo = @codigo`,
      
 editarTurno: `
     UPDATE turnos

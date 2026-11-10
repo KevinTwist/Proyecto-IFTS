@@ -8,13 +8,24 @@ Content-Type: application/json
 {
   "nombre": "Jose",
   "apellido": "López",
-  "id_disponibilidad": 5
+  "id_disponibilidad": 6
 }
 ###Leer turnos
 GET http://127.0.0.1:3000/api/turnos
 
 ### Buscar turno por Codigo
-GET http://127.0.0.1:3000/api/turnos/DYQ6XW
+GET http://127.0.0.1:3000/api/turnos/0DGU4W
 
 ### Eliminar un turno por Codigo
-DELETE http://127.0.0.1:3000/api/turnos/K7P2QX
+DELETE http://127.0.0.1:3000/api/turnos/14XHBM
+
+### Editar un turno por Codigo
+PATCH http://127.0.0.1:3000/api/turnos/VOFBFB
+Content-Type: application/json
+
+{
+    "nombre": "Norberto Gonzalez",
+    "idDisponibilidad": 8 
+
+}
+

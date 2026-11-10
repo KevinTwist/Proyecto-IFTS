@@ -19,7 +19,7 @@ exports.crearTurno = async (req, res) => {
             });
         }
 
-        if (error.message.includes('UNIQUE') || error.number === 2601 || error.code === 'EREQUEST') {
+        if (error.message.includes('UNIQUE') || error.number === 2601) {
             return res.status(409).json({ 
                 mensaje: 'Este horario fue reservado por otro cliente.' 
             });
@@ -64,10 +64,9 @@ exports.buscarTurno = async (req, res) => {
 exports.editarTurno = async (req, res) => {
     try {
         const codigoActual = req.params.codigoTurno;
-        const { nuevoCodigo, nombre, idDisponibilidad } = req.body;
+        const { nombre, idDisponibilidad } = req.body;
 
         if (
-            nuevoCodigo === undefined &&
             nombre === undefined &&
             idDisponibilidad === undefined
         ) {
@@ -78,32 +77,47 @@ exports.editarTurno = async (req, res) => {
 
         const resultado = await turnoService.editarTurno(
             codigoActual,
-            nuevoCodigo,
             nombre,
             idDisponibilidad
         );
 
-        if (resultado === 0) {
+        if (!resultado) {
             return res.status(404).json({
                 mensaje: 'No se encontró el turno'
             });
         }
 
         res.status(200).json({
-            mensaje: 'Turno editado correctamente'
+        mensaje: 'Turno editado correctamente',
+        codigo: resultado.codigo
         });
 
+
     } catch (error) {
-        console.log('Error al editar el turno:', error);
-        res.status(500).json({
-            mensaje: 'Error al editar el turno'
+    console.log('Error al editar el turno:', error);
+
+    if (error.number === 547) {
+        return res.status(404).json({
+            mensaje: 'El horario seleccionado no existe.'
         });
     }
+
+    if (error.number === 2601) {
+        return res.status(409).json({
+            mensaje: 'Este horario ya está reservado por otro cliente.'
+        });
+    }
+
+    res.status(500).json({
+        mensaje: 'Error al editar el turno'
+    });
+}
+
 };
 
 exports.eliminarTurno = async (req, res) => {
     try {
-        const codigoTurno = (req.params.codigo);
+        const codigoTurno = (req.params.codigoTurno);
 
 
         const filasEliminadas = await turnoService.eliminarTurno(codigoTurno);
