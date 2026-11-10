@@ -19,7 +19,7 @@ exports.crearTurno = async (req, res) => {
             });
         }
 
-        if (error.number === 2601 || error.number === 2627 || error.message.includes('UNIQUE')) {
+        if (error.message.includes('UNIQUE') || error.number === 2601) {
             return res.status(409).json({ 
                 mensaje: 'Este horario fue reservado por otro cliente.' 
             });
@@ -57,9 +57,64 @@ exports.buscarTurno = async (req, res) => {
     }
 };
 
+
+exports.editarTurno = async (req, res) => {
+    try {
+        const codigoActual = req.params.codigoTurno;
+        const { nombre, idDisponibilidad } = req.body;
+
+        if (
+            nombre === undefined &&
+            idDisponibilidad === undefined
+        ) {
+            return res.status(400).json({
+                mensaje: 'Debe enviar al menos un dato para modificar'
+            });
+        }
+
+        const resultado = await turnoService.editarTurno(
+            codigoActual,
+            nombre,
+            idDisponibilidad
+        );
+
+        if (!resultado) {
+            return res.status(404).json({
+                mensaje: 'No se encontró el turno'
+            });
+        }
+
+        res.status(200).json({
+        mensaje: 'Turno editado correctamente',
+        codigo: resultado.codigo
+        });
+
+
+    } catch (error) {
+    console.log('Error al editar el turno:', error);
+
+    if (error.number === 547) {
+        return res.status(404).json({
+            mensaje: 'El horario seleccionado no existe.'
+        });
+    }
+
+    if (error.number === 2601) {
+        return res.status(409).json({
+            mensaje: 'Este horario ya está reservado por otro cliente.'
+        });
+    }
+
+    res.status(500).json({
+        mensaje: 'Error al editar el turno'
+    });
+}
+
+};
+
 exports.eliminarTurno = async (req, res) => {
     try {
-        const codigoTurno = (req.params.codigo);
+        const codigoTurno = (req.params.codigoTurno);
 
 
         const filasEliminadas = await turnoService.eliminarTurno(codigoTurno);
