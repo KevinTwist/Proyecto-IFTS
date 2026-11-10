@@ -63,6 +63,27 @@ exports.buscarTurno = async (codigo) => {
     }
 };
 
+
+exports.editarTurno = async (codigoActual, nuevoCodigo, nombre, idDisponibilidad) => {
+    try {
+        const pool = await conectarDB();
+
+        const resultado = await pool.request()
+            .input('codigoActual', sql.NVarChar(10), codigoActual)
+            .input('nuevoCodigo', sql.NVarChar(10), nuevoCodigo ?? null)
+            .input('nombre', sql.NVarChar(20), nombre ?? null)
+            .input('idDisponibilidad', sql.Int, idDisponibilidad ?? null)
+            .query(queries.editarTurno);
+
+        return resultado.rowsAffected[0];
+
+    } catch (error) {
+        console.log('Error al editar el turno', error);
+        throw error;
+    }
+};
+
+
 exports.eliminarTurno = async (codigo) => {
     try {
         const pool = await conectarDB();

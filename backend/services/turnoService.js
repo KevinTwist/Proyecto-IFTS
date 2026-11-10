@@ -17,6 +17,19 @@ exports.buscarTurno = async (codigo) => {
     return turno;
 };
 
+
+exports.editarTurno = async (codigoActual, nuevoCodigo, nombre, idDisponibilidad) => {
+    const resultado = await turnoRepository.editarTurno(
+        codigoActual,
+        nuevoCodigo,
+        nombre,
+        idDisponibilidad
+    );
+
+    return resultado;
+};
+
+
 exports.eliminarTurno = async (codigo) => {
     const filasEliminadas = await turnoRepository.eliminarTurno(codigo);
 
