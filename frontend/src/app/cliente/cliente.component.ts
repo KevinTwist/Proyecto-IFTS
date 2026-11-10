@@ -1,117 +1,196 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DisponibilidadService } from '../services/disponibilidad.service';
 import { TurnoService } from '../services/turno.service';
 import { Disponibilidad } from '../models/disponibilidad.model';
-import { Turno } from '../models/turno.model';
+
+const MESES = [
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+];
 
 @Component({
   selector: 'app-cliente',
-  imports: [ReactiveFormsModule],
+  imports: [FormsModule],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css'
 })
 export class ClienteComponent implements OnInit {
   private readonly disponibilidadService = inject(DisponibilidadService);
   private readonly turnoService = inject(TurnoService);
-  private readonly fb = inject(FormBuilder);
 
-  readonly cargando = signal(true);
-  readonly errorCarga = signal<string | null>(null);
   readonly disponibilidades = signal<Disponibilidad[]>([]);
-  readonly seleccion = signal<Disponibilidad | null>(null);
+  readonly cargando = signal(true);
+  readonly mensajeEstado = signal('');
+  readonly codigoTurnoCreado = signal('');
+  readonly nombreCliente = signal('');
+  readonly horarioSeleccionado = signal<Disponibilidad | null>(null);
+  readonly mostrarFormularioDatos = signal(false);
   readonly enviando = signal(false);
-  readonly errorReserva = signal<string | null>(null);
-  readonly turnoReservado = signal<Turno | null>(null);
 
-  readonly formulario = this.fb.nonNullable.group({
-    nombre: ['', [Validators.required]],
-    apellido: ['', [Validators.required]]
+  readonly mesActual = signal(new Date());
+  readonly diaSeleccionado = signal<number | null>(null);
+
+  readonly mesAnioActual = computed(
+    () => `${MESES[this.mesActual().getMonth()]} ${this.mesActual().getFullYear()}`
+  );
+
+  readonly celdasCalendario = computed<(number | null)[]>(() => {
+    const fecha = this.mesActual();
+    const cantidad = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0).getDate();
+    const primerDia = new Date(fecha.getFullYear(), fecha.getMonth(), 1).getDay();
+    const celdasVacias = (primerDia + 6) % 7;
+    return [
+      ...Array.from({ length: celdasVacias }, () => null),
+      ...Array.from({ length: cantidad }, (_, i) => i + 1)
+    ];
+  });
+
+  readonly horariosDelDia = computed(() => {
+    const dia = this.diaSeleccionado();
+    if (dia === null) {
+      return [];
+    }
+    const fechaISO = this.fechaISO(dia);
+    return this.disponibilidades().filter((d) => d.fecha === fechaISO);
+  });
+
+  readonly fechaSeleccionada = computed(() => {
+    const dia = this.diaSeleccionado();
+    if (dia === null) {
+      return '';
+    }
+    const fecha = this.mesActual();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    return `${String(dia).padStart(2, '0')}/${mes}/${fecha.getFullYear()}`;
   });
 
   ngOnInit(): void {
     this.cargarDisponibilidades();
   }
 
+  private fechaISO(dia: number): string {
+    const fecha = this.mesActual();
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+    return `${fecha.getFullYear()}-${mes}-${String(dia).padStart(2, '0')}`;
+  }
+
   cargarDisponibilidades(): void {
     this.cargando.set(true);
-    this.errorCarga.set(null);
     this.disponibilidadService.obtenerDisponibilidades().subscribe({
-      next: (disponibilidades) => {
-        this.disponibilidades.set(disponibilidades);
+      next: (data) => {
+        this.disponibilidades.set(data);
         this.cargando.set(false);
+        this.autoseleccionarDia();
       },
       error: () => {
-        this.errorCarga.set('No se pudo obtener los horarios disponibles.');
+        this.mensajeEstado.set('Error al cargar los horarios disponibles.');
         this.cargando.set(false);
       }
     });
   }
 
-  seleccionar(disponibilidad: Disponibilidad): void {
-    this.seleccion.set(disponibilidad);
-    this.errorReserva.set(null);
+  private autoseleccionarDia(): void {
+    if (this.diaSeleccionado() !== null) {
+      return;
+    }
+    const primera = this.disponibilidades()[0];
+    if (!primera) {
+      return;
+    }
+    const [anio, mes, dia] = primera.fecha.split('-').map(Number);
+    this.mesActual.set(new Date(anio, mes - 1, 1));
+    this.diaSeleccionado.set(dia);
   }
 
-  cancelarSeleccion(): void {
-    this.seleccion.set(null);
-    this.formulario.reset();
-    this.errorReserva.set(null);
+  mesAnterior(): void {
+    const fecha = this.mesActual();
+    this.mesActual.set(new Date(fecha.getFullYear(), fecha.getMonth() - 1, 1));
+    this.diaSeleccionado.set(null);
+    this.horarioSeleccionado.set(null);
   }
 
-  reservarOtro(): void {
-    this.turnoReservado.set(null);
+  mesSiguiente(): void {
+    const fecha = this.mesActual();
+    this.mesActual.set(new Date(fecha.getFullYear(), fecha.getMonth() + 1, 1));
+    this.diaSeleccionado.set(null);
+    this.horarioSeleccionado.set(null);
   }
 
-  confirmarReserva(): void {
-    if (this.enviando() || this.seleccion() === null) {
+  seleccionarDia(dia: number): void {
+    this.diaSeleccionado.set(dia);
+    this.horarioSeleccionado.set(null);
+    this.mensajeEstado.set('');
+  }
+
+  seleccionarTurno(item: Disponibilidad): void {
+    this.horarioSeleccionado.set(item);
+    this.mensajeEstado.set('');
+  }
+
+  irAFormularioDatos(): void {
+    if (this.horarioSeleccionado()) {
+      this.mostrarFormularioDatos.set(true);
+      this.mensajeEstado.set('');
+    }
+  }
+
+  volverASeleccion(): void {
+    this.mostrarFormularioDatos.set(false);
+  }
+
+  confirmarTurnoFinal(): void {
+    const nombre = this.nombreCliente().trim();
+    const horario = this.horarioSeleccionado();
+
+    if (!horario || !nombre) {
+      this.mensajeEstado.set('Completá tu nombre y elegí un horario.');
       return;
     }
 
-    if (this.formulario.invalid) {
-      this.formulario.markAllAsTouched();
+    if (nombre.length > 20) {
+      this.mensajeEstado.set('El nombre no puede superar los 20 caracteres.');
       return;
     }
 
-    const { nombre, apellido } = this.formulario.getRawValue();
-    const nombreCompleto = `${nombre} ${apellido}`.trim();
-
-    if (nombreCompleto.length > 20) {
-      this.errorReserva.set('El nombre y el apellido juntos no pueden superar 20 caracteres.');
+    if (this.enviando()) {
       return;
     }
-
-    const disponibilidadElegida = this.seleccion()!;
 
     this.enviando.set(true);
-    this.errorReserva.set(null);
-
     this.turnoService
-      .crearTurno({ nombre, apellido, id_disponibilidad: disponibilidadElegida.id_disponibilidad })
+      .crearTurno({ nombre, apellido: '', id_disponibilidad: horario.id_disponibilidad })
       .subscribe({
-        next: (respuesta) => {
-          this.turnoReservado.set({
-            ...respuesta.turno,
-            fecha: disponibilidadElegida.fecha,
-            hora: disponibilidadElegida.hora
-          });
+        next: (res) => {
           this.enviando.set(false);
-          this.cancelarSeleccion();
+          this.codigoTurnoCreado.set(res.turno.codigo);
+          this.mostrarFormularioDatos.set(false);
           this.cargarDisponibilidades();
         },
         error: (error: HttpErrorResponse) => {
           this.enviando.set(false);
 
           if (error.status === 409) {
-            this.seleccion.set(null);
-            this.errorReserva.set('El horario acaba de ser ocupado por otra persona. Elegí otro de la lista.');
+            this.mostrarFormularioDatos.set(false);
+            this.horarioSeleccionado.set(null);
+            this.mensajeEstado.set('El horario acaba de ser ocupado por otra persona. Elegí otro de la lista.');
             this.cargarDisponibilidades();
             return;
           }
 
-          this.errorReserva.set(error.error?.mensaje ?? 'No se pudo conectar con el servidor. Intentá de nuevo.');
+          this.mensajeEstado.set('No se pudo concretar la reserva.');
         }
       });
+  }
+
+  reiniciarFlujo(): void {
+    this.codigoTurnoCreado.set('');
+    this.mostrarFormularioDatos.set(false);
+    this.horarioSeleccionado.set(null);
+    this.diaSeleccionado.set(null);
+    this.nombreCliente.set('');
+    this.mensajeEstado.set('');
+    this.cargarDisponibilidades();
   }
 }
