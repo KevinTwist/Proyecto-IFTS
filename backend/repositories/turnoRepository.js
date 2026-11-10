@@ -13,11 +13,9 @@ exports.crearTurno = async (datosTurno) => {
             .input('codigo', sql.NVarChar(10), codigo)
             .input('nombre', sql.NVarChar(20), nombre)
             .input('idDisponibilidad', sql.Int, datosTurno.id_disponibilidad)
-            .query(`
-                INSERT INTO turnos (codigo, nombre, id_disponibilidad)
-                VALUES (@codigo, @nombre, @idDisponibilidad);
-                SELECT SCOPE_IDENTITY() AS turno_id;
-            `);
+            .query(
+                queries.crearTurno
+            );
 
         return {
             turno_id: resultado.recordset[0]?.turno_id,
