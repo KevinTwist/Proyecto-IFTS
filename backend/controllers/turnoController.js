@@ -47,7 +47,7 @@ exports.buscarTurno = async (req, res) => {
         const codigoFiltered = await turnoService.buscarTurno(codigoParam);
 
         if (codigoFiltered.length === 0) {
-            return res.status(404).send(`No se encontró el codigoTurno: ${codigoParam}`);
+            return res.status(404).json({ mensaje: `No se encontró el turno con codigo: ${codigoParam}` });
         }
         res.status(200).json(codigoFiltered);
 
