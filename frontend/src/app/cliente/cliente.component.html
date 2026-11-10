@@ -1,0 +1,79 @@
+<section class="panel">
+  <h1>Reservá tu turno</h1>
+  <p class="subtitulo">Elegí un horario disponible para reservar tu turno.</p>
+
+  @if (turnoReservado(); as turno) {
+    <article class="exito">
+      <h2>¡Turno reservado!</h2>
+      <p>
+        Tu código es: <strong>{{ turno.codigo }}</strong>
+      </p>
+      <p>
+        Fecha: <strong>{{ turno.fecha }} · {{ turno.hora }}</strong>
+      </p>
+      <p class="nota">Guardá el código: con él podés consultar o cancelar tu turno.</p>
+      <button type="button" class="btn" (click)="reservarOtro()">Reservar otro turno</button>
+    </article>
+  }
+
+  @if (cargando()) {
+    <p class="estado">Cargando horarios…</p>
+  } @else if (errorCarga(); as error) {
+    <p class="estado error">{{ error }}</p>
+    <button type="button" class="btn" (click)="cargarDisponibilidades()">Reintentar</button>
+  } @else if (disponibilidades().length === 0) {
+    <p class="estado">No hay horarios disponibles por ahora.</p>
+  } @else {
+    <ul class="lista">
+      @for (disponibilidad of disponibilidades(); track disponibilidad.id_disponibilidad) {
+        <li class="item">
+          <span class="horario">{{ disponibilidad.fecha }} · {{ disponibilidad.hora }}</span>
+          <button
+            type="button"
+            class="btn"
+            [class.activo]="seleccion()?.id_disponibilidad === disponibilidad.id_disponibilidad"
+            (click)="seleccionar(disponibilidad)"
+          >
+            Reservar
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (errorReserva(); as error) {
+    <p class="estado error">{{ error }}</p>
+  }
+
+  @if (seleccion(); as elegida) {
+    <section class="reserva">
+      <h2>Tus datos</h2>
+      <p>
+        Horario elegido: <strong>{{ elegida.fecha }} · {{ elegida.hora }}</strong>
+        <button type="button" class="enlace" (click)="cancelarSeleccion()">cambiar horario</button>
+      </p>
+
+      <form [formGroup]="formulario" (ngSubmit)="confirmarReserva()">
+        <label>
+          Nombre
+          <input type="text" formControlName="nombre" />
+        </label>
+        @if (formulario.controls.nombre.hasError('required') && formulario.controls.nombre.touched) {
+          <p class="campo-error">Ingresá tu nombre.</p>
+        }
+
+        <label>
+          Apellido
+          <input type="text" formControlName="apellido" />
+        </label>
+        @if (formulario.controls.apellido.hasError('required') && formulario.controls.apellido.touched) {
+          <p class="campo-error">Ingresá tu apellido.</p>
+        }
+
+        <button type="submit" class="btn principal" [disabled]="enviando()">
+          {{ enviando() ? 'Reservando…' : 'Confirmar reserva' }}
+        </button>
+      </form>
+    </section>
+  }
+</section>

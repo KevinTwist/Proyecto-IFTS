@@ -1,4 +1,9 @@
-const queryBaseSelect = 'SELECT * FROM turnos';
+const queryBaseSelect = `SELECT
+    t.turno_id, t.codigo, t.nombre, t.id_disponibilidad, t.created_at,
+    CONVERT(CHAR(10), d.date_disponible, 23) AS fecha,
+    CONVERT(CHAR(5), d.date_disponible, 108) AS hora
+    FROM turnos t
+    INNER JOIN disponibilidad d ON d.id_disponibilidad = t.id_disponibilidad`;
 
 const queryDisponibilidadesLibres = `SELECT
     d.id_disponibilidad, d.date_disponible
@@ -17,7 +22,7 @@ module.exports = {
     leerDisponibilidadesLibres: queryDisponibilidadesLibres,
     crearTurno: queryCrearTurno,
     leerTurnos: queryBaseSelect,
-    buscarTurno: `${queryBaseSelect} WHERE codigo = @codigo`,
+    buscarTurno: `${queryBaseSelect} WHERE t.codigo = @codigo`,
     eliminarTurno: 'DELETE FROM turnos WHERE codigo = @codigo'
 }
 
