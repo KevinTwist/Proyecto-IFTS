@@ -19,13 +19,11 @@ exports.crearTurno = async (req, res) => {
             });
         }
 
-        if (error.message.includes('UNIQUE') || error.number === 2601 || error.code === 'EREQUEST') {
+        if (error.number === 2601 || error.number === 2627 || error.message.includes('UNIQUE')) {
             return res.status(409).json({ 
                 mensaje: 'Este horario fue reservado por otro cliente.' 
             });
         }
-
-         
 
         res.status(500).json({ mensaje: 'Error al crear el turno' });
     }
@@ -38,7 +36,6 @@ exports.leerTurnos = async (req, res) => {
         res.status(200).json(resultado);
 
     } catch (error) {
-        console.log('Error en turnoController:', error);
         res.status(500).json({ mensaje: 'Error al obtener los turnos' });
     }
 };

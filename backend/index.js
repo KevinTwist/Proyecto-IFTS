@@ -5,8 +5,6 @@ const { conectarDB } = require('./database/conexion');
 const disponibilidadRouter = require('./routers/disponibilidadRouter');
 const backendRouter = require('./routers/backendRouter');
 const turnoRouter = require('./routers/turnoRouter');
-const eliminarTurno = require('./database/queries');
-const router = require('./routers/disponibilidadRouter');
 
 const app = express();
 

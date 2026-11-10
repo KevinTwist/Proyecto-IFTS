@@ -13,9 +13,7 @@ exports.crearTurno = async (datosTurno) => {
             .input('codigo', sql.NVarChar(10), codigo)
             .input('nombre', sql.NVarChar(20), nombre)
             .input('idDisponibilidad', sql.Int, datosTurno.id_disponibilidad)
-            .query(
-                queries.crearTurno
-            );
+            .query(queries.crearTurno);
 
         return {
             turno_id: resultado.recordset[0]?.turno_id,
