@@ -6,10 +6,15 @@ POST http://127.0.0.1:3000/api/turnos
 Content-Type: application/json
 
 {
-  "nombre": "Ana",
+  "nombre": "Jose",
   "apellido": "López",
-  "id_disponibilidad": 3
+  "id_disponibilidad": 5
 }
+###Leer turnos
+GET http://127.0.0.1:3000/api/turnos
 
-### Eliminar un turno por ID
-DELETE http://127.0.0.1:3000/api/turnos/1
+### Buscar turno por Codigo
+GET http://127.0.0.1:3000/api/turnos/DYQ6XW
+
+### Eliminar un turno por Codigo
+DELETE http://127.0.0.1:3000/api/turnos/K7P2QX
