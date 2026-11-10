@@ -5,3 +5,16 @@ exports.obtenerDisponibilidades = async () => {
 
     return disponibilidades;
 };
+
+exports.crearDisponibilidad = async (disponibilidad) => {
+
+    try{
+        const respuesta = await disponibilidadRepository.crearDisponibilidad(disponibilidad);
+        return respuesta;
+        
+    } catch (error) {
+        console.log('Error en disponibilidadService:', error);
+        throw error;
+    }
+
+};

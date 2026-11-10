@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get('/', disponibilidadController.obtenerDisponibilidades);
 
+router.post("/create", disponibilidadController.crearDisponibilidad);
+
 module.exports = router;
