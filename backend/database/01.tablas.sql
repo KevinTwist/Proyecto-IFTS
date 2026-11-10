@@ -1,0 +1,27 @@
+USE db_turnos;
+GO
+
+
+DROP TABLE IF EXISTS turnos;
+DROP TABLE IF EXISTS disponibilidad;
+GO
+
+CREATE TABLE disponibilidad(
+    id_disponibilidad INT IDENTITY(1,1) PRIMARY KEY,
+    date_disponible   DATETIME2 NOT NULL
+);
+GO
+
+CREATE TABLE turnos (
+    turno_id          INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+    codigo            NVARCHAR(10)  NOT NULL UNIQUE,
+    nombre            NVARCHAR(20)  NOT NULL,
+    id_disponibilidad INT           NOT NULL, 
+    created_at        DATETIME2     NOT NULL DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_turnos_disponibilidad FOREIGN KEY (id_disponibilidad) REFERENCES disponibilidad(id_disponibilidad)
+);
+GO
+
+CREATE UNIQUE INDEX turno_disponibilidad_act
+ON turnos(id_disponibilidad);
+GO
