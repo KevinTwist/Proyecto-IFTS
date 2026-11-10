@@ -25,8 +25,6 @@ exports.crearTurno = async (req, res) => {
             });
         }
 
-         
-
         res.status(500).json({ mensaje: 'Error al crear el turno' });
     }
 };
@@ -38,7 +36,6 @@ exports.leerTurnos = async (req, res) => {
         res.status(200).json(resultado);
 
     } catch (error) {
-        console.log('Error en turnoController:', error);
         res.status(500).json({ mensaje: 'Error al obtener los turnos' });
     }
 };
