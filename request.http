@@ -1,32 +1,41 @@
-### Ver las disponibilidades 
+### 1 Probar conexión con la BD.
+GET http://127.0.0.1:3000/api/test-conexion
+
+### 2 Ver las disponibilidades.
 GET http://127.0.0.1:3000/api/disponibilidades
 
-### Eliminar una disponibilidad por id
-DELETE http://127.0.0.1:3000/api/disponibilidades/delete/3
+### 3 Crear una disponivilidad.
+POST http://127.0.0.1:3000/api/disponibilidades/create
+Content-Type: application/json
+{
+  "date_disponible": "2027-12-01T10:00:00"
+}
 
-###Crear turnos
+### 4 Crear turnos.
 POST http://127.0.0.1:3000/api/turnos
 Content-Type: application/json
-
 {
   "nombre": "Jose",
   "apellido": "López",
   "id_disponibilidad": 6
 }
-###Leer turnos
+
+### 5 Leer todos los turnos.
 GET http://127.0.0.1:3000/api/turnos
 
-### Buscar turno por Codigo
+### 6 Buscar turno por Código.
 GET http://127.0.0.1:3000/api/turnos/0DGU4W
 
-### Eliminar un turno por Codigo
-DELETE http://127.0.0.1:3000/api/turnos/14XHBM
-
-### Editar un turno por Codigo
+### 7 Editar un turno por Código.
 PATCH http://127.0.0.1:3000/api/turnos/VOFBFB
 Content-Type: application/json
-
 {
     "nombre": "Norberto Gonzalez",
     "idDisponibilidad": 8 
 }
+
+### 8 Eliminar un turno por Código.
+DELETE http://127.0.0.1:3000/api/turnos/14XHBM
+
+### 9 Eliminar una disponibilidad por id.
+DELETE http://127.0.0.1:3000/api/disponibilidades/delete/3
