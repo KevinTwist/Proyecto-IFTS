@@ -37,7 +37,6 @@ exports.agregarDisponibilidad = async (disponibilidad) => {
     } catch (error) {
         console.log('Error en disponibilidadRepository:', error);
         throw error;
-    } finally {
-        pool.close();
     }
+    
 };
