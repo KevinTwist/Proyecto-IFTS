@@ -18,7 +18,7 @@ exports.crearTurno = async (req, res) => {
                 mensaje: 'El horario seleccionado no existe.' 
             });
         }
-        
+
         if (error.message.includes('UNIQUE') || error.number === 2601 || error.code === 'EREQUEST') {
             return res.status(409).json({ 
                 mensaje: 'Este horario fue reservado por otro cliente.' 
@@ -62,16 +62,13 @@ exports.buscarTurno = async (req, res) => {
 
 exports.eliminarTurno = async (req, res) => {
     try {
-        const turnoId = Number(req.params.turnoId);
+        const codigoTurno = (req.params.codigo);
 
-        if (!Number.isInteger(turnoId)) {
-            return res.status(400).json({ mensaje: 'El ID del turno debe ser un número entero' });
-        }
 
-        const filasEliminadas = await turnoService.eliminarTurno(turnoId);
+        const filasEliminadas = await turnoService.eliminarTurno(codigoTurno);
 
         if (filasEliminadas === 0) {
-            return res.status(404).json({ mensaje: `No se encontró el turno con ID: ${turnoId}` });
+            return res.status(404).json({ mensaje: `No se encontró el turno con codigo: ${codigoTurno}` });
         }
 
         res.status(200).json({ mensaje: 'Turno eliminado correctamente' });

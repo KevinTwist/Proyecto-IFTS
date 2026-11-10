@@ -49,12 +49,12 @@ exports.leerTurnos = async () => {
 
 
 
-exports.buscarTurno = async (turnoId) => {
+exports.buscarTurno = async (codigo) => {
     try {
         const pool = await conectarDB();
 
         const resultado = await pool.request()
-            .input('turno_id', sql.Int, turnoId)
+            .input('codigo',sql.NVarChar(10), codigo)
             .query(queries.buscarTurno);
 
         return resultado.recordset;
@@ -65,12 +65,12 @@ exports.buscarTurno = async (turnoId) => {
     }
 };
 
-exports.eliminarTurno = async (turnoId) => {
+exports.eliminarTurno = async (codigo) => {
     try {
         const pool = await conectarDB();
 
         const resultado = await pool.request()
-            .input('turno_id', sql.Int, turnoId)
+            .input('codigo',sql.NVarChar(10), codigo)
             .query(queries.eliminarTurno);
 
         return resultado.rowsAffected[0];

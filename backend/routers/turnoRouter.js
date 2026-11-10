@@ -7,5 +7,5 @@ router.post('/', turnoController.crearTurno);
 
 router.get('/', turnoController.leerTurnos);
 router.get('/:codigoTurno', turnoController.buscarTurno);
-router.delete('/:turnoId', turnoController.eliminarTurno);
+router.delete('/:codigo', turnoController.eliminarTurno);
 module.exports = router;

@@ -11,14 +11,14 @@ exports.leerTurnos = async () => {
     return turnos;
 };
 
-exports.buscarTurno = async (turnoId) => {
-    const turno = await turnoRepository.buscarTurno(turnoId);
+exports.buscarTurno = async (codigo) => {
+    const turno = await turnoRepository.buscarTurno(codigo);
 
     return turno;
 };
 
-exports.eliminarTurno = async (turnoId) => {
-    const filasEliminadas = await turnoRepository.eliminarTurno(turnoId);
+exports.eliminarTurno = async (codigo) => {
+    const filasEliminadas = await turnoRepository.eliminarTurno(codigo);
 
     return filasEliminadas;
 };
