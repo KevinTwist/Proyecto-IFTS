@@ -26,10 +26,18 @@ exports.agregarDisponibilidad = async (disponibilidad) => {
 
     try {
 
-        const { date_disponible } = disponibilidad;
+        //const { date_disponible } = disponibilidad;
 
+        const { fecha, hora } = disponibilidad; //del front se debería recibir fecha y hora por separado
+
+        if (!fecha || !hora) {
+            throw new Error('Falta fecha o hora');
+        }
+
+        const fechaUTC = new Date(fecha + 'T' + hora + ':00Z'); //se pasa a UTC por si las dudas para que no se desfasen las fechas en la base de datos
+        
         const resultado = await pool.request()
-        .input('date_disponible', sql.DateTime2, date_disponible)
+        .input('date_disponible', sql.DateTime2, fechaUTC)
         .query(queries.agregarDisponibilidad);
 
         return resultado.recordset;
