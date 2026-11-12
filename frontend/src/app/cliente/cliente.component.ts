@@ -5,10 +5,12 @@ import { DisponibilidadService } from '../services/disponibilidad.service';
 import { TurnoService } from '../services/turno.service';
 import { Disponibilidad } from '../models/disponibilidad.model';
 import { Turno } from '../models/turno.model';
+import { ConfirmacionTurnoComponent } from '../confirmacion-turno/confirmacion-turno';
+
 
 @Component({
   selector: 'app-cliente',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ConfirmacionTurnoComponent],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css'
 })

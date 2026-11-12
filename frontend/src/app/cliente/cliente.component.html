@@ -2,19 +2,12 @@
   <h1>Reservá tu turno</h1>
   <p class="subtitulo">Elegí un horario disponible para reservar tu turno.</p>
 
-  @if (turnoReservado(); as turno) {
-    <article class="exito">
-      <h2>¡Turno reservado!</h2>
-      <p>
-        Tu código es: <strong>{{ turno.codigo }}</strong>
-      </p>
-      <p>
-        Fecha: <strong>{{ turno.fecha }} · {{ turno.hora }}</strong>
-      </p>
-      <p class="nota">Guardá el código: con él podés consultar o cancelar tu turno.</p>
-      <button type="button" class="btn" (click)="reservarOtro()">Reservar otro turno</button>
-    </article>
-  }
+ @if (turnoReservado(); as turno) {
+  <app-confirmacion-turno
+    [turno]="turno"
+    (volver)="reservarOtro()"
+  />
+}
 
   @if (cargando()) {
     <p class="estado">Cargando horarios…</p>
