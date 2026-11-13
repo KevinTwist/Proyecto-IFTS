@@ -48,6 +48,8 @@
               type="button"
               class="btn-horario"
               [class.selected]="horarioSeleccionado()?.id_disponibilidad === item.id_disponibilidad"
+              [class.ocupada]="item.ocupada"
+              [disabled]="item.ocupada"
               (click)="seleccionarTurno(item)"
             >
               {{ item.hora }}

@@ -12,6 +12,18 @@ exports.obtenerDisponibilidades = async (req, res) => {
     }
 };
 
+exports.obtenerTodasDisponibilidades = async (req, res) => {
+    try {
+        const resultado = await disponibilidadService.obtenerTodasDisponibilidades();
+
+        res.status(200).json(resultado);
+
+    } catch (error) {
+        console.log('Error en disponibilidadController:', error);
+        res.status(500).json({ mensaje: 'Error al obtener todas las disponibilidades' });
+    }
+};
+
 exports.crearDisponibilidad = async (req, res) => {
     try {
         const disponibilidad = req.body ?? {};

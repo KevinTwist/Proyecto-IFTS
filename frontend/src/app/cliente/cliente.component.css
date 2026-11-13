@@ -138,6 +138,18 @@
   font-weight: 600;
 }
 
+.btn-horario.ocupada {
+  background: rgb(210, 210, 210);
+  border-color: grey;
+  color: grey;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.btn-horario.ocupada:hover {
+  background: rgb(210, 210, 210);
+}
+
 .no-horarios {
   color: darkgrey;
   margin: 0;

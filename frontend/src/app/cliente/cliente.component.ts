@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DisponibilidadService } from '../services/disponibilidad.service';
 import { TurnoService } from '../services/turno.service';
-import { Disponibilidad } from '../models/disponibilidad.model';
+import { DisponibilidadAdmin } from '../models/disponibilidad.model';
 
 const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -20,12 +20,12 @@ export class ClienteComponent implements OnInit {
   private readonly disponibilidadService = inject(DisponibilidadService);
   private readonly turnoService = inject(TurnoService);
 
-  readonly disponibilidades = signal<Disponibilidad[]>([]);
+  readonly disponibilidades = signal<DisponibilidadAdmin[]>([]);
   readonly cargando = signal(true);
   readonly mensajeEstado = signal('');
   readonly codigoTurnoCreado = signal('');
   readonly nombreCliente = signal('');
-  readonly horarioSeleccionado = signal<Disponibilidad | null>(null);
+  readonly horarioSeleccionado = signal<DisponibilidadAdmin | null>(null);
   readonly mostrarFormularioDatos = signal(false);
   readonly enviando = signal(false);
 
@@ -78,7 +78,7 @@ export class ClienteComponent implements OnInit {
 
   cargarDisponibilidades(): void {
     this.cargando.set(true);
-    this.disponibilidadService.obtenerDisponibilidades().subscribe({
+    this.disponibilidadService.obtenerTodasDisponibilidades().subscribe({
       next: (data) => {
         this.disponibilidades.set(data);
         this.cargando.set(false);
@@ -95,7 +95,7 @@ export class ClienteComponent implements OnInit {
     if (this.diaSeleccionado() !== null) {
       return;
     }
-    const primera = this.disponibilidades()[0];
+    const primera = this.disponibilidades().find((d) => !d.ocupada);
     if (!primera) {
       return;
     }
@@ -124,7 +124,10 @@ export class ClienteComponent implements OnInit {
     this.mensajeEstado.set('');
   }
 
-  seleccionarTurno(item: Disponibilidad): void {
+  seleccionarTurno(item: DisponibilidadAdmin): void {
+    if (item.ocupada) {
+      return;
+    }
     this.horarioSeleccionado.set(item);
     this.mensajeEstado.set('');
   }

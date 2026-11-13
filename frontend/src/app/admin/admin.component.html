@@ -1,0 +1,84 @@
+<div class="admin-container">
+  <header class="header-sistema">
+    <div>
+      <h2>Panel de administración</h2>
+      <p>Creá y eliminá disponibilidades de horarios.</p>
+    </div>
+  </header>
+
+  <div class="seccion-crear">
+    <h3>Agregá una nueva disponibilidad.</h3>
+
+    <div class="form-group">
+      <label for="fecha">Fecha</label>
+      <input
+        id="fecha"
+        type="date"
+        [ngModel]="fecha()"
+        (ngModelChange)="fecha.set($event)"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="hora">Hora</label>
+      <input
+        id="hora"
+        type="time"
+        [ngModel]="hora()"
+        (ngModelChange)="hora.set($event)"
+      />
+    </div>
+
+    <button
+      type="button"
+      class="btn-primario"
+      [disabled]="creando()"
+      (click)="crearDisponibilidad()"
+    >
+      {{ creando() ? 'Creando…' : 'Crear disponibilidad' }}
+    </button>
+  </div>
+
+  <div class="seccion-listado">
+    <div class="listado-header">
+      <h3>Disponibilidades</h3>
+      <span class="resumen">
+        {{ totalLibres() }} libre(s) · {{ totalOcupadas() }} ocupada(s)
+      </span>
+    </div>
+
+    @if (cargando()) {
+      <p class="sin-datos">Cargando disponibilidades…</p>
+    } @else if (disponibilidades().length > 0) {
+      <ul class="lista-disponibilidades">
+        @for (item of disponibilidades(); track item.id_disponibilidad) {
+          <li class="item-disponibilidad" [class.ocupada]="item.ocupada">
+            <div class="item-datos">
+              <strong>{{ formatearFecha(item.fecha) }}</strong>
+              <span>{{ item.hora }}</span>
+            </div>
+
+            @if (item.ocupada) {
+              <span class="badge-ocupada">Ocupada</span>
+            } @else {
+              <button
+                type="button"
+                class="btn-eliminar"
+                [disabled]="eliminandoId() === item.id_disponibilidad"
+                (click)="eliminarDisponibilidad(item)"
+              >
+                {{ eliminandoId() === item.id_disponibilidad ? 'Eliminando…' : 'Eliminar' }}
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="sin-datos">Todavía no hay disponibilidades cargadas.</p>
+    }
+  </div>
+
+  @if (mensajeEstado()) {
+    <p class="mensaje" [class.mensaje-error]="mensajeError()">{{ mensajeEstado() }}</p>
+  }
+</div>
