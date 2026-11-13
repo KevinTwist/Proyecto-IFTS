@@ -15,6 +15,11 @@ export interface CrearTurnoRespuesta {
   turno: Turno;
 }
 
+export interface EditarTurnoPayload {
+  nombre?: string;
+  idDisponibilidad?: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TurnoService {
   private readonly http = inject(HttpClient);
@@ -22,5 +27,21 @@ export class TurnoService {
 
   crearTurno(payload: CrearTurnoPayload): Observable<CrearTurnoRespuesta> {
     return this.http.post<CrearTurnoRespuesta>(this.apiUrl, payload);
+  }
+
+  leerTurnos(): Observable<Turno[]> {
+    return this.http.get<Turno[]>(this.apiUrl);
+  }
+
+  buscarTurno(codigo: string): Observable<Turno[]> {
+    return this.http.get<Turno[]>(`${this.apiUrl}/${codigo}`);
+  }
+
+  editarTurno(codigo: string, payload: EditarTurnoPayload): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${codigo}`, payload);
+  }
+
+  eliminarTurno(codigo: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${codigo}`);
   }
 }

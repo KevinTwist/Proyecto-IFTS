@@ -106,6 +106,17 @@
   background: lightgrey;
 }
 
+.dia:enabled {
+  border: 2px solid rgb(35, 116, 209);
+  font-weight: 600;
+}
+
+.dia:disabled {
+  color: lightgrey;
+  background: white;
+  cursor: not-allowed;
+}
+
 .dia.selected {
   background: blue;
   color: white;

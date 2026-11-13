@@ -1,0 +1,46 @@
+
+<section class="confirmacion">
+
+  <div class="icono">✓</div>
+
+  <h1>¡Turno reservado!</h1>
+
+  <p class="mensaje">
+    Tu reserva se realizó correctamente.
+  </p>
+
+  <article class="datos-turno">
+
+    <h2>Detalle del turno</h2>
+
+    <p>
+      Tu código es:
+      <strong>{{ turno().codigo }}</strong>
+    </p>
+
+    <p>
+      Fecha:
+      <strong>{{ turno().fecha }}</strong>
+    </p>
+
+    <p>
+      Horario:
+      <strong>{{ turno().hora }}</strong>
+    </p>
+
+    <p class="nota">
+      Guardá el código: con él podés consultar o cancelar tu turno.
+    </p>
+
+  </article>
+
+  <button
+    type="button"
+    class="btn"
+    (click)="volver.emit()"
+  >
+    Reservar otro turno
+  </button>
+
+</section>
+

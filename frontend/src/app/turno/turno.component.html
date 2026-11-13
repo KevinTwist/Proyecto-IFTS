@@ -1,0 +1,83 @@
+<div class="contenedor">
+  <header class="header-sistema">
+    <h2>Turno</h2>
+    <p>Buscá tu turno con el código que te dimos al reservar.</p>
+  </header>
+
+  <div class="caja">
+    <div class="form-group">
+      <label for="codigo">Código del turno</label>
+      <input
+        id="codigo"
+        type="text"
+        [ngModel]="codigo()"
+        (ngModelChange)="codigo.set($event)"
+        (keyup.enter)="buscar()"
+        placeholder="Ej: 0DGU4W"
+        maxlength="10"
+      />
+    </div>
+    <button type="button" class="btn-primario" (click)="buscar()">Buscar</button>
+  </div>
+
+  @if (turno(); as t) {
+    <div class="caja">
+      <h3>Detalle del turno</h3>
+      <p>Código: <strong>{{ t.codigo }}</strong></p>
+      <p>Nombre: <strong>{{ t.nombre }}</strong></p>
+      <p>Fecha: <strong>{{ t.fecha }}</strong></p>
+      <p>Horario: <strong>{{ t.hora }}</strong></p>
+
+      @if (!editando()) {
+        <div class="botones">
+          <button type="button" class="btn-peligro" (click)="cancelarTurno()">Cancelar turno</button>
+          <button type="button" class="btn-primario" (click)="abrirEdicion()">Editar</button>
+        </div>
+      }
+    </div>
+  }
+
+  @if (editando()) {
+    <div class="caja">
+      <h3>Editar turno</h3>
+
+      <div class="form-group">
+        <label for="nombre">Nombre y Apellido (máx. 20 car.)</label>
+        <input
+          id="nombre"
+          type="text"
+          [ngModel]="nuevoNombre()"
+          (ngModelChange)="nuevoNombre.set($event)"
+          maxlength="20"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="horario">Cambiar horario (opcional)</label>
+        <select
+          id="horario"
+          [ngModel]="nuevoHorario()"
+          (ngModelChange)="nuevoHorario.set($event)"
+        >
+          <option [ngValue]="null">Mantener el horario actual</option>
+          @for (d of disponibilidades(); track d.id_disponibilidad) {
+            <option [ngValue]="d.id_disponibilidad">{{ d.fecha }} - {{ d.hora }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="botones">
+        <button type="button" class="btn-secundario" (click)="editando.set(false)">Volver</button>
+        <button type="button" class="btn-primario" (click)="guardarCambios()">Guardar</button>
+      </div>
+    </div>
+  }
+
+  @if (mensajeExito()) {
+    <p class="mensaje-exito">{{ mensajeExito() }}</p>
+  }
+
+  @if (mensajeEstado()) {
+    <p class="mensaje">{{ mensajeEstado() }}</p>
+  }
+</div>

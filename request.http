@@ -7,13 +7,15 @@ GET http://127.0.0.1:3000/api/disponibilidades
 ### 3 Crear una disponivilidad.
 POST http://127.0.0.1:3000/api/disponibilidades/create
 Content-Type: application/json
+
 {
-  "date_disponible": "2027-12-01T10:00:00"
+  "date_disponible": "2026-10-01T15:00:00"
 }
 
 ### 4 Crear turnos.
 POST http://127.0.0.1:3000/api/turnos
 Content-Type: application/json
+
 {
   "nombre": "Jose",
   "apellido": "López",
@@ -29,6 +31,7 @@ GET http://127.0.0.1:3000/api/turnos/0DGU4W
 ### 7 Editar un turno por Código.
 PATCH http://127.0.0.1:3000/api/turnos/VOFBFB
 Content-Type: application/json
+
 {
     "nombre": "Norberto Gonzalez",
     "idDisponibilidad": 8 

@@ -4,6 +4,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { DisponibilidadService } from '../services/disponibilidad.service';
 import { TurnoService } from '../services/turno.service';
 import { Disponibilidad } from '../models/disponibilidad.model';
+import { Turno } from '../models/turno.model';
+import { ConfirmacionTurnoComponent } from '../confirmacion-turno/confirmacion-turno';
+
 
 const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -12,7 +15,7 @@ const MESES = [
 
 @Component({
   selector: 'app-cliente',
-  imports: [FormsModule],
+  imports: [FormsModule, ConfirmacionTurnoComponent],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css'
 })
@@ -23,7 +26,7 @@ export class ClienteComponent implements OnInit {
   readonly disponibilidades = signal<Disponibilidad[]>([]);
   readonly cargando = signal(true);
   readonly mensajeEstado = signal('');
-  readonly codigoTurnoCreado = signal('');
+  readonly turnoReservado = signal<Turno | null>(null);
   readonly nombreCliente = signal('');
   readonly horarioSeleccionado = signal<Disponibilidad | null>(null);
   readonly mostrarFormularioDatos = signal(false);
@@ -68,6 +71,11 @@ export class ClienteComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarDisponibilidades();
+  }
+
+  tieneDisponibilidad(dia: number): boolean {
+    const fecha = this.fechaISO(dia);
+    return this.disponibilidades().some((d) => d.fecha === fecha);
   }
 
   private fechaISO(dia: number): string {
@@ -164,7 +172,11 @@ export class ClienteComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.enviando.set(false);
-          this.codigoTurnoCreado.set(res.turno.codigo);
+          this.turnoReservado.set({
+            ...res.turno,
+            fecha: this.fechaSeleccionada(),
+            hora: horario.hora
+          });
           this.mostrarFormularioDatos.set(false);
           this.cargarDisponibilidades();
         },
@@ -185,7 +197,7 @@ export class ClienteComponent implements OnInit {
   }
 
   reiniciarFlujo(): void {
-    this.codigoTurnoCreado.set('');
+    this.turnoReservado.set(null);
     this.mostrarFormularioDatos.set(false);
     this.horarioSeleccionado.set(null);
     this.diaSeleccionado.set(null);

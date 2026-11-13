@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { ClienteComponent } from './cliente/cliente.component';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [ClienteComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Disponibilidad } from '../models/disponibilidad.model';
 
+export interface CrearDisponibilidadPayload {
+  date_disponible: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class DisponibilidadService {
   private readonly http = inject(HttpClient);
@@ -11,5 +15,13 @@ export class DisponibilidadService {
 
   obtenerDisponibilidades(): Observable<Disponibilidad[]> {
     return this.http.get<Disponibilidad[]>(this.apiUrl);
+  }
+
+  crearDisponibilidad(payload: CrearDisponibilidadPayload): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create`, payload);
+  }
+
+  eliminarDisponibilidad(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/delete/${id}`);
   }
 }

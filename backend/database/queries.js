@@ -10,6 +10,7 @@ const queryDisponibilidadesLibres = `SELECT
     FROM disponibilidad d
     LEFT JOIN turnos t ON t.id_disponibilidad = d.id_disponibilidad
     WHERE t.turno_id IS NULL
+    AND d.date_disponible > GETDATE()
     ORDER BY d.date_disponible`;
 
 const queryCrearTurno = `INSERT INTO turnos

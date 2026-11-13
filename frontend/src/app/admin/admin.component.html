@@ -1,0 +1,57 @@
+<div class="contenedor">
+  <header class="header-sistema">
+    <h2>Administración</h2>
+    <p>Gestioná los horarios y los turnos reservados.</p>
+  </header>
+
+  <div class="caja">
+    <h3>Nuevo horario</h3>
+    <div class="form-group">
+      <label for="fecha">Fecha y hora</label>
+      <input
+        id="fecha"
+        type="datetime-local"
+        [ngModel]="nuevaFecha()"
+        (ngModelChange)="nuevaFecha.set($event)"
+      />
+    </div>
+    <button type="button" class="btn-primario" (click)="crearDisponibilidad()">Crear horario</button>
+  </div>
+
+  @if (mensajeExito()) {
+    <p class="mensaje-exito">{{ mensajeExito() }}</p>
+  }
+
+  @if (mensajeEstado()) {
+    <p class="mensaje">{{ mensajeEstado() }}</p>
+  }
+
+  <div class="caja">
+    <h3>Horarios libres</h3>
+    @for (d of disponibilidades(); track d.id_disponibilidad) {
+      <div class="fila">
+        <span>{{ d.fecha }} - {{ d.hora }}</span>
+        <button type="button" class="btn-eliminar" (click)="eliminarDisponibilidad(d.id_disponibilidad)">
+          Eliminar
+        </button>
+      </div>
+    } @empty {
+      <p class="vacio">No hay horarios libres.</p>
+    }
+  </div>
+
+  <div class="caja">
+    <h3>Turnos reservados</h3>
+    @for (t of turnos(); track t.turno_id) {
+      <div class="fila">
+        <span>
+          <strong>{{ t.codigo }}</strong> · {{ t.nombre }}<br />
+          <small>{{ t.fecha }} - {{ t.hora }}</small>
+        </span>
+        <button type="button" class="btn-eliminar" (click)="eliminarTurno(t.codigo)">Eliminar</button>
+      </div>
+    } @empty {
+      <p class="vacio">No hay turnos reservados.</p>
+    }
+  </div>
+</div>

@@ -1,0 +1,63 @@
+
+.confirmacion {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 30px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.icono {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #d4edda;
+  color: #218838;
+  font-size: 40px;
+  line-height: 65px;
+}
+
+h1 {
+  color: #218838;
+  margin-bottom: 10px;
+}
+
+.mensaje {
+  color: #666;
+}
+
+.datos-turno {
+  margin: 25px 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.datos-turno h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.datos-turno p {
+  margin: 15px 0;
+}
+
+.nota {
+  color: #666;
+  font-size: 14px;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  background: #218838;
+  color: white;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #19692c;
+}
