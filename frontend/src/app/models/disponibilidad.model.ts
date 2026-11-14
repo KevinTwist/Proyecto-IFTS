@@ -3,3 +3,7 @@ export interface Disponibilidad {
   fecha: string;
   hora: string;
 }
+
+export interface DisponibilidadAdmin extends Disponibilidad {
+  ocupada: boolean;
+}

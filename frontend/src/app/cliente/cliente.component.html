@@ -4,6 +4,7 @@
       <h2>¿Buscás un turno?</h2>
       <p>Seleccioná una fecha y un horario para reservar.</p>
     </div>
+    <a routerLink="/turno" class="link-turno">Ya tengo turno</a>
   </header>
 
  @if (!turnoReservado() && !mostrarFormularioDatos()) {
@@ -49,6 +50,8 @@
               type="button"
               class="btn-horario"
               [class.selected]="horarioSeleccionado()?.id_disponibilidad === item.id_disponibilidad"
+              [class.ocupada]="item.ocupada"
+              [disabled]="item.ocupada"
               (click)="seleccionarTurno(item)"
             >
               {{ item.hora }}

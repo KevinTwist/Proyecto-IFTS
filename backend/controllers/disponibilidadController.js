@@ -12,6 +12,18 @@ exports.obtenerDisponibilidades = async (req, res) => {
     }
 };
 
+exports.obtenerTodasDisponibilidades = async (req, res) => {
+    try {
+        const resultado = await disponibilidadService.obtenerTodasDisponibilidades();
+
+        res.status(200).json(resultado);
+
+    } catch (error) {
+        console.log('Error en disponibilidadController:', error);
+        res.status(500).json({ mensaje: 'Error al obtener todas las disponibilidades' });
+    }
+};
+
 exports.crearDisponibilidad = async (req, res) => {
     try {
         const disponibilidad = req.body ?? {};
@@ -19,6 +31,12 @@ exports.crearDisponibilidad = async (req, res) => {
         if (!disponibilidad.date_disponible) {
             return res.status(400).json({
                 mensaje: 'Debe enviar date_disponible (ej: 2027-12-01T10:00:00)'
+            });
+        }
+
+        if (new Date(disponibilidad.date_disponible) <= new Date()) {
+            return res.status(400).json({
+                mensaje: 'No se pueden crear horarios en esta fecha.'
             });
         }
 

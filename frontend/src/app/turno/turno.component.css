@@ -13,7 +13,27 @@
 }
 
 .header-sistema {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 24px;
+}
+
+.link-volver {
+  border: 2px solid rgb(35, 116, 209);
+  color: rgb(35, 116, 209);
+  background: white;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.link-volver:hover {
+  background: rgb(35, 116, 209);
+  color: white;
 }
 
 .header-sistema h2 {

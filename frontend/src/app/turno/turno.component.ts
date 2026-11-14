@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TurnoService } from '../services/turno.service';
 import { DisponibilidadService } from '../services/disponibilidad.service';
@@ -8,7 +9,7 @@ import { Disponibilidad } from '../models/disponibilidad.model';
 
 @Component({
   selector: 'app-turno',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './turno.component.html',
   styleUrl: './turno.component.css'
 })

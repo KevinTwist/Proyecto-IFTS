@@ -1,10 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { TurnoService } from '../services/turno.service';
 import { DisponibilidadService } from '../services/disponibilidad.service';
-import { Turno } from '../models/turno.model';
-import { Disponibilidad } from '../models/disponibilidad.model';
+import { DisponibilidadAdmin } from '../models/disponibilidad.model';
 
 @Component({
   selector: 'app-admin',
@@ -13,86 +11,132 @@ import { Disponibilidad } from '../models/disponibilidad.model';
   styleUrl: './admin.component.css'
 })
 export class AdminComponent implements OnInit {
-  private readonly turnoService = inject(TurnoService);
   private readonly disponibilidadService = inject(DisponibilidadService);
 
-  readonly turnos = signal<Turno[]>([]);
-  readonly disponibilidades = signal<Disponibilidad[]>([]);
-  readonly nuevaFecha = signal('');
+  readonly disponibilidades = signal<DisponibilidadAdmin[]>([]);
+  readonly cargando = signal(true);
   readonly mensajeEstado = signal('');
-  readonly mensajeExito = signal('');
+  readonly mensajeError = signal(false);
+
+  readonly fecha = signal('');
+  readonly hora = signal('');
+  readonly horarios = this.generarHorarios();
+  readonly creando = signal(false);
+  readonly eliminandoId = signal<number | null>(null);
+
+  readonly totalLibres = computed(
+    () => this.disponibilidades().filter((d) => !d.ocupada).length
+  );
+  readonly totalOcupadas = computed(
+    () => this.disponibilidades().filter((d) => d.ocupada).length
+  );
 
   ngOnInit(): void {
-    this.cargarDatos();
+    this.cargarDisponibilidades();
   }
 
-  cargarDatos(): void {
-    this.turnoService.leerTurnos().subscribe({
-      next: (data) => this.turnos.set(data),
-      error: () => this.mensajeEstado.set('Error al cargar los turnos.')
-    });
-
-    this.disponibilidadService.obtenerDisponibilidades().subscribe({
-      next: (data) => this.disponibilidades.set(data),
-      error: () => this.mensajeEstado.set('Error al cargar los horarios.')
+  cargarDisponibilidades(): void {
+    this.cargando.set(true);
+    this.disponibilidadService.obtenerTodasDisponibilidades().subscribe({
+      next: (data) => {
+        this.disponibilidades.set(data);
+        this.cargando.set(false);
+      },
+      error: () => {
+        this.mensajeError.set(true);
+        this.mensajeEstado.set('No se pudieron cargar las disponibilidades.');
+        this.cargando.set(false);
+      }
     });
   }
 
   crearDisponibilidad(): void {
-    this.limpiarMensajes();
-    const fecha = this.nuevaFecha();
+    const fecha = this.fecha().trim();
+    const hora = this.hora().trim();
 
-    if (!fecha) {
-      this.mensajeEstado.set('Elegí una fecha y hora.');
+    this.mensajeEstado.set('');
+    this.mensajeError.set(false);
+
+    if (!fecha || !hora) {
+      this.mensajeError.set(true);
+      this.mensajeEstado.set('Completá la fecha y la hora.');
       return;
     }
 
-    this.disponibilidadService.crearDisponibilidad({ date_disponible: `${fecha}:00` }).subscribe({
-      next: () => {
-        this.nuevaFecha.set('');
-        this.mensajeExito.set('Horario creado.');
-        this.cargarDatos();
-      },
-      error: () => this.mensajeEstado.set('No se pudo crear el horario.')
-    });
-  }
-
-  eliminarDisponibilidad(id: number): void {
-    this.limpiarMensajes();
-    if (!confirm('¿Eliminar este horario?')) {
+    if (new Date(`${fecha}T${hora}`) <= new Date()) {
+      this.mensajeError.set(true);
+      this.mensajeEstado.set('No se pueden crear horarios en esta fecha.');
       return;
     }
 
-    this.disponibilidadService.eliminarDisponibilidad(id).subscribe({
+    if (this.creando()) {
+      return;
+    }
+
+    this.creando.set(true);
+    this.disponibilidadService.crearDisponibilidad(`${fecha}T${hora}:00`).subscribe({
       next: () => {
-        this.mensajeExito.set('Horario eliminado.');
-        this.cargarDatos();
+        this.creando.set(false);
+        this.fecha.set('');
+        this.hora.set('');
+        this.mensajeEstado.set('Disponibilidad creada con éxito.');
+        this.cargarDisponibilidades();
       },
       error: (error: HttpErrorResponse) => {
+        this.creando.set(false);
+        this.mensajeError.set(true);
         this.mensajeEstado.set(
-          error.status === 409 ? 'Ese horario tiene un turno reservado.' : 'No se pudo eliminar el horario.'
+          error.error?.mensaje ?? 'No se pudo crear la disponibilidad.'
         );
       }
     });
   }
 
-  eliminarTurno(codigo: string): void {
-    this.limpiarMensajes();
-    if (!confirm(`¿Eliminar el turno ${codigo}?`)) {
+  eliminarDisponibilidad(item: DisponibilidadAdmin): void {
+    if (item.ocupada) {
       return;
     }
 
-    this.turnoService.eliminarTurno(codigo).subscribe({
+    const confirmado = confirm(
+      `¿Eliminar la disponibilidad del ${this.formatearFecha(item.fecha)} a las ${item.hora}?`
+    );
+
+    if (!confirmado) {
+      return;
+    }
+
+    this.mensajeEstado.set('');
+    this.mensajeError.set(false);
+    this.eliminandoId.set(item.id_disponibilidad);
+
+    this.disponibilidadService.eliminarDisponibilidad(item.id_disponibilidad).subscribe({
       next: () => {
-        this.mensajeExito.set('Turno eliminado.');
-        this.cargarDatos();
+        this.eliminandoId.set(null);
+        this.mensajeEstado.set('Disponibilidad eliminada correctamente.');
+        this.cargarDisponibilidades();
       },
-      error: () => this.mensajeEstado.set('No se pudo eliminar el turno.')
+      error: (error: HttpErrorResponse) => {
+        this.eliminandoId.set(null);
+        this.mensajeError.set(true);
+        this.mensajeEstado.set(
+          error.error?.mensaje ?? 'No se pudo eliminar la disponibilidad.'
+        );
+      }
     });
   }
 
-  private limpiarMensajes(): void {
-    this.mensajeEstado.set('');
-    this.mensajeExito.set('');
+  private generarHorarios(): string[] {
+    const horarios: string[] = [];
+    for (let hora = 8; hora <= 20; hora++) {
+      for (const minutos of ['00', '15', '30', '45']) {
+        horarios.push(`${String(hora).padStart(2, '0')}:${minutos}`);
+      }
+    }
+    return horarios;
+  }
+
+  formatearFecha(fecha: string): string {
+    const [anio, mes, dia] = fecha.split('-');
+    return `${dia}/${mes}/${anio}`;
   }
 }

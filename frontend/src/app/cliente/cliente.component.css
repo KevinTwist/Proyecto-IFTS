@@ -30,6 +30,22 @@
   color: grey;
 }
 
+.link-turno {
+  border: 2px solid rgb(35, 116, 209);
+  color: rgb(35, 116, 209);
+  background: white;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.link-turno:hover {
+  background: rgb(35, 116, 209);
+  color: white;
+}
+
 .seccion-calendario,
 .seccion-horarios,
 .modal-datos,
@@ -147,6 +163,18 @@
   border-color: rgb(35, 35, 209);
   color: white;
   font-weight: 600;
+}
+
+.btn-horario.ocupada {
+  background: rgb(210, 210, 210);
+  border-color: grey;
+  color: grey;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.btn-horario.ocupada:hover {
+  background: rgb(210, 210, 210);
 }
 
 .no-horarios {

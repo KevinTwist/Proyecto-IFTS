@@ -4,8 +4,9 @@ import { TurnoComponent } from './turno/turno.component';
 import { AdminComponent } from './admin/admin.component';
 
 export const routes: Routes = [
-  { path: '', component: ClienteComponent },
+  { path: '', redirectTo: 'cliente', pathMatch: 'full' },
+  { path: 'cliente', component: ClienteComponent },
   { path: 'turno', component: TurnoComponent },
-  { path: 'admin', component: AdminComponent },
-  { path: '**', redirectTo: '' }
+  { path: 'administrador', component: AdminComponent },
+  { path: '**', redirectTo: 'cliente' }
 ];

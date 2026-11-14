@@ -1,57 +1,88 @@
-<div class="contenedor">
+<div class="admin-container">
   <header class="header-sistema">
-    <h2>Administración</h2>
-    <p>Gestioná los horarios y los turnos reservados.</p>
+    <div>
+      <h2>Panel de administración</h2>
+      <p>Creá y eliminá disponibilidades de horarios.</p>
+    </div>
   </header>
 
-  <div class="caja">
-    <h3>Nuevo horario</h3>
+  <div class="seccion-crear">
+    <h3>Agregá una nueva disponibilidad.</h3>
+
     <div class="form-group">
-      <label for="fecha">Fecha y hora</label>
+      <label for="fecha">Fecha</label>
       <input
         id="fecha"
-        type="datetime-local"
-        [ngModel]="nuevaFecha()"
-        (ngModelChange)="nuevaFecha.set($event)"
+        type="date"
+        [ngModel]="fecha()"
+        (ngModelChange)="fecha.set($event)"
       />
     </div>
-    <button type="button" class="btn-primario" (click)="crearDisponibilidad()">Crear horario</button>
+
+    <div class="form-group">
+      <label for="hora">Hora</label>
+      <select
+        id="hora"
+        [ngModel]="hora()"
+        (ngModelChange)="hora.set($event)"
+      >
+        <option value="">Elegí un horario</option>
+        @for (h of horarios; track h) {
+          <option [value]="h">{{ h }}</option>
+        }
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primario"
+      [disabled]="creando()"
+      (click)="crearDisponibilidad()"
+    >
+      {{ creando() ? 'Creando…' : 'Crear disponibilidad' }}
+    </button>
   </div>
 
-  @if (mensajeExito()) {
-    <p class="mensaje-exito">{{ mensajeExito() }}</p>
-  }
+  <div class="seccion-listado">
+    <div class="listado-header">
+      <h3>Disponibilidades</h3>
+      <span class="resumen">
+        {{ totalLibres() }} libre(s) · {{ totalOcupadas() }} ocupada(s)
+      </span>
+    </div>
+
+    @if (cargando()) {
+      <p class="sin-datos">Cargando disponibilidades…</p>
+    } @else if (disponibilidades().length > 0) {
+      <ul class="lista-disponibilidades">
+        @for (item of disponibilidades(); track item.id_disponibilidad) {
+          <li class="item-disponibilidad" [class.ocupada]="item.ocupada">
+            <div class="item-datos">
+              <strong>{{ formatearFecha(item.fecha) }}</strong>
+              <span>{{ item.hora }}</span>
+            </div>
+
+            @if (item.ocupada) {
+              <span class="badge-ocupada">Ocupada</span>
+            } @else {
+              <button
+                type="button"
+                class="btn-eliminar"
+                [disabled]="eliminandoId() === item.id_disponibilidad"
+                (click)="eliminarDisponibilidad(item)"
+              >
+                {{ eliminandoId() === item.id_disponibilidad ? 'Eliminando…' : 'Eliminar' }}
+              </button>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="sin-datos">Todavía no hay disponibilidades cargadas.</p>
+    }
+  </div>
 
   @if (mensajeEstado()) {
-    <p class="mensaje">{{ mensajeEstado() }}</p>
+    <p class="mensaje" [class.mensaje-error]="mensajeError()">{{ mensajeEstado() }}</p>
   }
-
-  <div class="caja">
-    <h3>Horarios libres</h3>
-    @for (d of disponibilidades(); track d.id_disponibilidad) {
-      <div class="fila">
-        <span>{{ d.fecha }} - {{ d.hora }}</span>
-        <button type="button" class="btn-eliminar" (click)="eliminarDisponibilidad(d.id_disponibilidad)">
-          Eliminar
-        </button>
-      </div>
-    } @empty {
-      <p class="vacio">No hay horarios libres.</p>
-    }
-  </div>
-
-  <div class="caja">
-    <h3>Turnos reservados</h3>
-    @for (t of turnos(); track t.turno_id) {
-      <div class="fila">
-        <span>
-          <strong>{{ t.codigo }}</strong> · {{ t.nombre }}<br />
-          <small>{{ t.fecha }} - {{ t.hora }}</small>
-        </span>
-        <button type="button" class="btn-eliminar" (click)="eliminarTurno(t.codigo)">Eliminar</button>
-      </div>
-    } @empty {
-      <p class="vacio">No hay turnos reservados.</p>
-    }
-  </div>
 </div>

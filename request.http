@@ -4,7 +4,10 @@ GET http://127.0.0.1:3000/api/test-conexion
 ### 2 Ver las disponibilidades.
 GET http://127.0.0.1:3000/api/disponibilidades
 
-### 3 Crear una disponivilidad.
+### 3 Ver todas las disponibilidades y ocupadas.
+GET http://127.0.0.1:3000/api/disponibilidades/todas
+
+### 4 Crear una disponivilidad.
 POST http://127.0.0.1:3000/api/disponibilidades/create
 Content-Type: application/json
 
@@ -12,7 +15,7 @@ Content-Type: application/json
   "date_disponible": "2026-10-01T15:00:00"
 }
 
-### 4 Crear turnos.
+### 5 Crear turnos.
 POST http://127.0.0.1:3000/api/turnos
 Content-Type: application/json
 
@@ -22,13 +25,13 @@ Content-Type: application/json
   "id_disponibilidad": 6
 }
 
-### 5 Leer todos los turnos.
+### 6 Leer todos los turnos.
 GET http://127.0.0.1:3000/api/turnos
 
-### 6 Buscar turno por Código.
+### 7 Buscar turno por Código.
 GET http://127.0.0.1:3000/api/turnos/0DGU4W
 
-### 7 Editar un turno por Código.
+### 8 Editar un turno por Código.
 PATCH http://127.0.0.1:3000/api/turnos/VOFBFB
 Content-Type: application/json
 
@@ -37,8 +40,14 @@ Content-Type: application/json
     "idDisponibilidad": 8 
 }
 
-### 8 Eliminar un turno por Código.
+### 9 Eliminar un turno por Código.
 DELETE http://127.0.0.1:3000/api/turnos/14XHBM
 
-### 9 Eliminar una disponibilidad por id.
+### 10 Eliminar una disponibilidad por id.
 DELETE http://127.0.0.1:3000/api/disponibilidades/delete/3
+
+### 11 Frontend - Cliente
+GET http://localhost:4200/cliente
+
+### 12 Frontend - Administrador
+GET http://localhost:4200/administrador

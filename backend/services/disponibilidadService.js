@@ -6,6 +6,12 @@ exports.obtenerDisponibilidades = async () => {
     return disponibilidades;
 };
 
+exports.obtenerTodasDisponibilidades = async () => {
+    const disponibilidades = await disponibilidadRepository.obtenerTodasDisponibilidades();
+
+    return disponibilidades;
+};
+
 exports.crearDisponibilidad = async (disponibilidad) => {
 
     try{
