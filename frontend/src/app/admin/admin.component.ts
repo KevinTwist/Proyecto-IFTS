@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DisponibilidadService } from '../services/disponibilidad.service';
 import { DisponibilidadAdmin } from '../models/disponibilidad.model';
+import { TurnoService } from '../services/turno.service';
+import { Turno } from '../models/turno.model';
 
 @Component({
   selector: 'app-admin',
@@ -12,8 +14,11 @@ import { DisponibilidadAdmin } from '../models/disponibilidad.model';
 })
 export class AdminComponent implements OnInit {
   private readonly disponibilidadService = inject(DisponibilidadService);
+  private readonly turnoService = inject(TurnoService);
 
   readonly disponibilidades = signal<DisponibilidadAdmin[]>([]);
+  readonly turnos = signal<Turno[]>([]);
+readonly cargandoTurnos = signal(true);
   readonly cargando = signal(true);
   readonly mensajeEstado = signal('');
   readonly mensajeError = signal(false);
@@ -23,6 +28,7 @@ export class AdminComponent implements OnInit {
   readonly horarios = this.generarHorarios();
   readonly creando = signal(false);
   readonly eliminandoId = signal<number | null>(null);
+  
 
   readonly totalLibres = computed(
     () => this.disponibilidades().filter((d) => !d.ocupada).length
@@ -31,9 +37,10 @@ export class AdminComponent implements OnInit {
     () => this.disponibilidades().filter((d) => d.ocupada).length
   );
 
-  ngOnInit(): void {
-    this.cargarDisponibilidades();
-  }
+ ngOnInit(): void {
+  this.cargarDisponibilidades();
+  this.cargandoTurnos();
+}
 
   cargarDisponibilidades(): void {
     this.cargando.set(true);
@@ -49,6 +56,23 @@ export class AdminComponent implements OnInit {
       }
     });
   }
+
+  cargarTurnos(): void {
+  this.cargandoTurnos.set(true);
+
+  this.turnoService.leerTurnos().subscribe({
+    next: (data) => {
+      this.turnos.set(data);
+      this.cargandoTurnos.set(false);
+
+      console.log('Turnos recibidos:', data);
+    },
+    error: (error) => {
+      console.error('Error al cargar los turnos:', error);
+      this.cargandoTurnos.set(false);
+    }
+  });
+}
 
   crearDisponibilidad(): void {
     const fecha = this.fecha().trim();
