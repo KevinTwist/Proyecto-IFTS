@@ -43,3 +43,19 @@ exports.crearDisponibilidad = async (disponibilidad) => {
     }
     
 };
+
+exports.eliminarDisponibilidad = async (id) => {
+    try {
+        const pool = await conectarDB();
+
+        const resultado = await pool.request()
+            .input('id', sql.Int, id)
+            .query(queries.eliminarDisponibilidad);
+
+        return resultado.rowsAffected[0];
+
+    } catch (error) {
+        console.log('Error en disponibilidadRepository:', error);
+        throw error;
+    }
+};

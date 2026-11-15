@@ -40,7 +40,8 @@ editarTurno: `
         VALUES (CAST(@date_disponible AS DATETIME2));
 
         SELECT SCOPE_IDENTITY() AS id_disponibilidad;`,
-    eliminarTurno: 'DELETE FROM turnos WHERE codigo = @codigo'
+    eliminarTurno: 'DELETE FROM turnos WHERE codigo = @codigo',
+    eliminarDisponibilidad: 'DELETE FROM disponibilidad WHERE id_disponibilidad = @id'
 }
 
 

@@ -7,4 +7,6 @@ router.get('/', disponibilidadController.obtenerDisponibilidades);
 
 router.post("/create", disponibilidadController.crearDisponibilidad);
 
+router.delete("/delete/:id", disponibilidadController.eliminarDisponibilidad);
+
 module.exports = router;

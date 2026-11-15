@@ -1,149 +1,251 @@
 :host {
   display: block;
-  max-width: 540px;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: whitesmoke;
+  color: rgb(50, 50, 50)
+}
+
+.cliente-container {
+  max-width: 560px;
   margin: 0 auto;
   padding: 24px 16px;
-  font-family: system-ui, -apple-system, sans-serif;
-  color: #1f2933;
 }
 
-h1 {
-  margin: 0 0 4px;
-  font-size: 1.5rem;
+.header-sistema {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.subtitulo {
-  margin: 0 0 20px;
-  color: #52606d;
+.header-sistema h2 {
+  margin: 0;
+  font-size: 1.4rem;
 }
 
-.lista {
-  list-style: none;
-  margin: 0 0 24px;
-  padding: 0;
+.header-sistema p {
+  margin: 4px 0 0;
+  color: grey;
+}
+
+.seccion-calendario,
+.seccion-horarios,
+.modal-datos,
+.confirmacion-box {
+  background: white;
+  border: 1px solid black;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.seccion-calendario h3,
+.seccion-horarios h3,
+.modal-datos h3 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+}
+
+.calendario-box {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.item {
+.calendario-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  background: #f5f7fa;
-  border: 1px solid #e4e7eb;
-  border-radius: 8px;
-}
-
-.horario {
+  align-items: center;
   font-weight: 600;
 }
 
-.btn {
-  border: 1px solid #2563eb;
-  background: #fff;
-  color: #2563eb;
-  padding: 8px 16px;
-  border-radius: 8px;
+.btn-mes {
+  border: 1px solid grey;
+  background: white;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.btn-mes:hover {
+  background: whitesmoke;
+}
+
+.calendario-grid-dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.calendario-grid-dias > span:not(.dia-vacio) {
+  font-size: 0.75rem;
+  color: darkgrey;
+  padding: 4px 0;
+}
+
+.dia-vacio {
+  min-height: 36px;
+}
+
+.dia {
+  border: none;
+  background: white;
+  border-radius: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.dia:hover {
+  background: lightgrey;
+}
+
+.dia.selected {
+  background: blue;
+  color: white;
+  font-weight: 600;
+}
+
+.grid-horarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.btn-horario {
+  border: 1px solid black;
+  background: rgb(214, 214, 214);
+  border-radius: 8px;
+  padding: 10px 0;
   font-size: 0.95rem;
+  cursor: pointer;
 }
 
-.btn:hover {
-  background: #eff6ff;
+.btn-horario:hover {
+  background: white;
 }
 
-.btn.activo {
-  background: #2563eb;
-  color: #fff;
+.btn-horario.selected {
+  background: rgb(35, 35, 209);
+  border-color: rgb(35, 35, 209);
+  color: white;
+  font-weight: 600;
 }
 
-.btn.principal {
-  background: #2563eb;
-  color: #fff;
+.no-horarios {
+  color: darkgrey;
+  margin: 0;
+}
+
+.btn-confirmar-principal {
   width: 100%;
-  margin-top: 4px;
+  border: none;
+  background: rgb(13, 134, 13);
+  color: whitesmoke;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.btn.principal:disabled {
-  opacity: 0.6;
+.btn-confirmar-principal:disabled {
+  background: grey;
   cursor: not-allowed;
 }
 
-.reserva {
-  padding: 16px;
-  border: 1px solid #e4e7eb;
-  border-radius: 8px;
-  background: #fff;
+.detalle-seleccion {
+  color: rgb(35, 116, 209);
+  margin: 0 0 16px;
 }
 
-.reserva h2 {
-  margin: 0 0 8px;
-  font-size: 1.1rem;
-}
-
-.enlace {
-  border: none;
-  background: none;
-  color: #2563eb;
-  cursor: pointer;
-  padding: 0;
-  margin-left: 8px;
-  text-decoration: underline;
-}
-
-form {
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
-label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.form-group label {
   font-size: 0.9rem;
-  color: #52606d;
+  color: rgb(57, 79, 104);
 }
 
-input {
-  padding: 8px 10px;
-  border: 1px solid #cbd2d9;
+.form-group input {
+  padding: 10px;
+  border: 1px solid rgb(96, 111, 114);
   border-radius: 8px;
   font-size: 1rem;
 }
 
-.estado {
-  color: #52606d;
+.botones-modal {
+  display: flex;
+  gap: 12px;
 }
 
-.estado.error {
-  color: #c81e1e;
+.btn-secundario {
+  flex: 1;
+  border: 1px solid rgb(192, 204, 211);
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.95rem;
+  cursor: pointer;
 }
 
-.campo-error {
-  margin: -6px 0 0;
-  color: #c81e1e;
-  font-size: 0.85rem;
+.btn-secundario:hover {
+  background: rgb(192, 204, 211);
 }
 
-.exito {
-  margin-bottom: 24px;
-  padding: 16px;
-  border: 1px solid #86e1a4;
-  background: #f0fdf4;
-  border-radius: 8px;
+.btn-primario {
+  flex: 1;
+  border: none;
+  background: rgb(35, 116, 209);
+  color: white;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.exito h2 {
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirmacion-box {
+  text-align: center;
+  border-color: rgb(13, 165, 13);
+  background: white;
+}
+
+.confirmacion-box h3 {
+  color: rgb(13, 165, 13);
   margin: 0 0 8px;
-  color: #15803d;
 }
 
-.exito .nota {
-  color: #52606d;
-  font-size: 0.9rem;
+.codigo-destacado {
+  font-size: 1.6rem;
+  background: white;
+  border: 1px dashed rgb(13, 134, 13);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 8px 0 16px;
+}
+
+.confirmacion-box .btn-primario {
+  width: 100%;
+}
+
+.mensaje {
+  color: rgb(219, 71, 71);
+  text-align: center;
+  margin: 0 0 12px;
 }
