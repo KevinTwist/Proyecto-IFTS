@@ -20,6 +20,25 @@ exports.obtenerDisponibilidades = async () => {
     }
 };
 
+exports.obtenerTodasDisponibilidades = async () => {
+    try {
+        const pool = await conectarDB();
+
+        const resultado = await pool.request().query(queries.leerTodasDisponibilidades);
+
+        return resultado.recordset.map(item => ({
+            id_disponibilidad: item.id_disponibilidad,
+            fecha: item.date_disponible.toISOString().split('T')[0],
+            hora: item.date_disponible.toISOString().split('T')[1].substring(0, 5),
+            ocupada: Boolean(item.ocupada)
+        }));
+
+    } catch (error) {
+        console.log('Error al obtener todas las disponibilidades:', error);
+        throw error;
+    }
+};
+
 exports.crearDisponibilidad = async (disponibilidad) => {
 
     const pool = await conectarDB();

@@ -1,9 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DisponibilidadService } from '../services/disponibilidad.service';
 import { TurnoService } from '../services/turno.service';
-import { Disponibilidad } from '../models/disponibilidad.model';
+import { DisponibilidadAdmin } from '../models/disponibilidad.model';
+import { Turno } from '../models/turno.model';
+import { ConfirmacionTurnoComponent } from '../confirmacion-turno/confirmacion-turno';
 
 const MESES = [
   'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -12,7 +15,7 @@ const MESES = [
 
 @Component({
   selector: 'app-cliente',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink, ConfirmacionTurnoComponent],
   templateUrl: './cliente.component.html',
   styleUrl: './cliente.component.css'
 })
@@ -20,12 +23,12 @@ export class ClienteComponent implements OnInit {
   private readonly disponibilidadService = inject(DisponibilidadService);
   private readonly turnoService = inject(TurnoService);
 
-  readonly disponibilidades = signal<Disponibilidad[]>([]);
+  readonly disponibilidades = signal<DisponibilidadAdmin[]>([]);
   readonly cargando = signal(true);
   readonly mensajeEstado = signal('');
-  readonly codigoTurnoCreado = signal('');
+  readonly turnoReservado = signal<Turno | null>(null);
   readonly nombreCliente = signal('');
-  readonly horarioSeleccionado = signal<Disponibilidad | null>(null);
+  readonly horarioSeleccionado = signal<DisponibilidadAdmin | null>(null);
   readonly mostrarFormularioDatos = signal(false);
   readonly enviando = signal(false);
 
@@ -70,6 +73,11 @@ export class ClienteComponent implements OnInit {
     this.cargarDisponibilidades();
   }
 
+  tieneDisponibilidad(dia: number): boolean {
+    const fecha = this.fechaISO(dia);
+    return this.disponibilidades().some((d) => d.fecha === fecha && !d.ocupada);
+  }
+
   private fechaISO(dia: number): string {
     const fecha = this.mesActual();
     const mes = String(fecha.getMonth() + 1).padStart(2, '0');
@@ -78,9 +86,12 @@ export class ClienteComponent implements OnInit {
 
   cargarDisponibilidades(): void {
     this.cargando.set(true);
-    this.disponibilidadService.obtenerDisponibilidades().subscribe({
+    this.disponibilidadService.obtenerTodasDisponibilidades().subscribe({
       next: (data) => {
-        this.disponibilidades.set(data);
+        const ahora = new Date();
+        this.disponibilidades.set(
+          data.filter((d) => new Date(`${d.fecha}T${d.hora}`) > ahora)
+        );
         this.cargando.set(false);
         this.autoseleccionarDia();
       },
@@ -95,7 +106,7 @@ export class ClienteComponent implements OnInit {
     if (this.diaSeleccionado() !== null) {
       return;
     }
-    const primera = this.disponibilidades()[0];
+    const primera = this.disponibilidades().find((d) => !d.ocupada);
     if (!primera) {
       return;
     }
@@ -124,7 +135,10 @@ export class ClienteComponent implements OnInit {
     this.mensajeEstado.set('');
   }
 
-  seleccionarTurno(item: Disponibilidad): void {
+  seleccionarTurno(item: DisponibilidadAdmin): void {
+    if (item.ocupada) {
+      return;
+    }
     this.horarioSeleccionado.set(item);
     this.mensajeEstado.set('');
   }
@@ -164,7 +178,11 @@ export class ClienteComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.enviando.set(false);
-          this.codigoTurnoCreado.set(res.turno.codigo);
+          this.turnoReservado.set({
+            ...res.turno,
+            fecha: this.fechaSeleccionada(),
+            hora: horario.hora
+          });
           this.mostrarFormularioDatos.set(false);
           this.cargarDisponibilidades();
         },
@@ -185,7 +203,7 @@ export class ClienteComponent implements OnInit {
   }
 
   reiniciarFlujo(): void {
-    this.codigoTurnoCreado.set('');
+    this.turnoReservado.set(null);
     this.mostrarFormularioDatos.set(false);
     this.horarioSeleccionado.set(null);
     this.diaSeleccionado.set(null);

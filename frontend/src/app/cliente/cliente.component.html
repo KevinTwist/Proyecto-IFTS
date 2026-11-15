@@ -4,9 +4,10 @@
       <h2>¿Buscás un turno?</h2>
       <p>Seleccioná una fecha y un horario para reservar.</p>
     </div>
+    <a routerLink="/turno" class="link-turno">Ya tengo turno</a>
   </header>
 
-  @if (!codigoTurnoCreado() && !mostrarFormularioDatos()) {
+ @if (!turnoReservado() && !mostrarFormularioDatos()) {
     <div class="seccion-calendario">
       <h3>Seleccionar fecha</h3>
 
@@ -27,6 +28,7 @@
                 type="button"
                 class="dia"
                 [class.selected]="diaSeleccionado() === celda"
+                [disabled]="!tieneDisponibilidad(celda)"
                 (click)="seleccionarDia(celda)"
               >
                 {{ celda }}
@@ -48,6 +50,8 @@
               type="button"
               class="btn-horario"
               [class.selected]="horarioSeleccionado()?.id_disponibilidad === item.id_disponibilidad"
+              [class.ocupada]="item.ocupada"
+              [disabled]="item.ocupada"
               (click)="seleccionarTurno(item)"
             >
               {{ item.hora }}
@@ -69,7 +73,7 @@
     </button>
   }
 
-  @if (mostrarFormularioDatos() && !codigoTurnoCreado()) {
+  @if (mostrarFormularioDatos() && !turnoReservado()) {
     <div class="modal-datos">
       <h3>Ingresá tus datos para finalizar</h3>
       <p class="detalle-seleccion">
@@ -102,16 +106,10 @@
     </div>
   }
 
-  @if (codigoTurnoCreado()) {
-    <div class="confirmacion-box">
-      <h3>Turno reservado con éxito</h3>
-      <p>Código de tu turno:</p>
-      <div class="codigo-destacado">
-        <strong>{{ codigoTurnoCreado() }}</strong>
-      </div>
-      <button type="button" class="btn-primario" (click)="reiniciarFlujo()">Sacar otro turno</button>
-    </div>
+   @if (turnoReservado(); as turno) {
+    <app-confirmacion-turno [turno]="turno" (volver)="reiniciarFlujo()" />
   }
+
 
   @if (mensajeEstado()) {
     <p class="mensaje">{{ mensajeEstado() }}</p>

@@ -10,6 +10,14 @@ const queryDisponibilidadesLibres = `SELECT
     FROM disponibilidad d
     LEFT JOIN turnos t ON t.id_disponibilidad = d.id_disponibilidad
     WHERE t.turno_id IS NULL
+    AND d.date_disponible > GETDATE()
+    ORDER BY d.date_disponible`;
+
+const queryTodasDisponibilidades = `SELECT
+    d.id_disponibilidad, d.date_disponible,
+    CASE WHEN t.turno_id IS NULL THEN 0 ELSE 1 END AS ocupada
+    FROM disponibilidad d
+    LEFT JOIN turnos t ON t.id_disponibilidad = d.id_disponibilidad
     ORDER BY d.date_disponible`;
 
 const queryCrearTurno = `INSERT INTO turnos
@@ -32,6 +40,7 @@ editarTurno: `
 `,
 
     leerDisponibilidadesLibres: queryDisponibilidadesLibres,
+    leerTodasDisponibilidades: queryTodasDisponibilidades,
     crearTurno: queryCrearTurno,
     leerTurnos: queryBaseSelect,
     buscarTurno: `${queryBaseSelect} WHERE t.codigo = @codigo`,
