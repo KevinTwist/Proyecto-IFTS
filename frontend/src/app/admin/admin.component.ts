@@ -39,7 +39,7 @@ readonly cargandoTurnos = signal(true);
 
  ngOnInit(): void {
   this.cargarDisponibilidades();
-  this.cargandoTurnos();
+  this.cargarTurnos();
 }
 
   cargarDisponibilidades(): void {

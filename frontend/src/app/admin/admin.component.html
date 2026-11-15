@@ -1,3 +1,4 @@
+
 <div class="admin-container">
   <header class="header-sistema">
     <div>
@@ -6,6 +7,7 @@
     </div>
   </header>
 
+  <!-- CREAR DISPONIBILIDAD -->
   <div class="seccion-crear">
     <h3>Agregá una nueva disponibilidad.</h3>
 
@@ -43,6 +45,7 @@
     </button>
   </div>
 
+  <!-- DISPONIBILIDADES -->
   <div class="seccion-listado">
     <div class="listado-header">
       <h3>Disponibilidades</h3>
@@ -51,41 +54,15 @@
       </span>
     </div>
 
-    <div class="seccion-listado">
-  <div class="listado-header">
-    <h3>Turnos reservados</h3>
-    <span class="resumen">
-      {{ turnos().length }} turno(s)
-    </span>
-  </div>
-
-  @if (cargandoTurnos()) {
-    <p class="sin-datos">Cargando turnos...</p>
-  } @else if (turnos().length > 0) {
-    <ul class="lista-disponibilidades">
-      @for (turno of turnos(); track turno.turno_id) {
-        <li class="item-disponibilidad">
-          <div class="item-datos">
-            <strong>{{ turno.nombre }}</strong>
-            <span>Código: {{ turno.codigo }}</span>
-            <span>{{ turno.fecha }} - {{ turno.hora }}</span>
-          </div>
-
-          <span class="badge-ocupada">Reservado</span>
-        </li>
-      }
-    </ul>
-  } @else {
-    <p class="sin-datos">Todavía no hay turnos reservados.</p>
-  }
-</div>
-
     @if (cargando()) {
       <p class="sin-datos">Cargando disponibilidades…</p>
     } @else if (disponibilidades().length > 0) {
       <ul class="lista-disponibilidades">
         @for (item of disponibilidades(); track item.id_disponibilidad) {
-          <li class="item-disponibilidad" [class.ocupada]="item.ocupada">
+          <li
+            class="item-disponibilidad"
+            [class.ocupada]="item.ocupada"
+          >
             <div class="item-datos">
               <strong>{{ formatearFecha(item.fecha) }}</strong>
               <span>{{ item.hora }}</span>
@@ -100,18 +77,72 @@
                 [disabled]="eliminandoId() === item.id_disponibilidad"
                 (click)="eliminarDisponibilidad(item)"
               >
-                {{ eliminandoId() === item.id_disponibilidad ? 'Eliminando…' : 'Eliminar' }}
+                {{
+                  eliminandoId() === item.id_disponibilidad
+                    ? 'Eliminando…'
+                    : 'Eliminar'
+                }}
               </button>
             }
           </li>
         }
       </ul>
     } @else {
-      <p class="sin-datos">Todavía no hay disponibilidades cargadas.</p>
+      <p class="sin-datos">
+        Todavía no hay disponibilidades cargadas.
+      </p>
     }
   </div>
 
+  <!-- TURNOS RESERVADOS -->
+  <div class="seccion-listado">
+    <div class="listado-header">
+      <h3>Turnos reservados</h3>
+      <span class="resumen">
+        {{ turnos().length }} turno(s)
+      </span>
+    </div>
+
+    @if (cargandoTurnos()) {
+      <p class="sin-datos">Cargando turnos...</p>
+    } @else if (turnos().length > 0) {
+      <div class="tabla-responsive">
+        <table class="tabla-turnos">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (turno of turnos(); track turno.turno_id) {
+              <tr>
+                <td>{{ turno.codigo }}</td>
+                <td>{{ turno.nombre }}</td>
+                <td>{{ turno.fecha }}</td>
+                <td>{{ turno.hora }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="sin-datos">
+        Todavía no hay turnos reservados.
+      </p>
+    }
+  </div>
+
+  <!-- MENSAJES -->
   @if (mensajeEstado()) {
-    <p class="mensaje" [class.mensaje-error]="mensajeError()">{{ mensajeEstado() }}</p>
+    <p
+      class="mensaje"
+      [class.mensaje-error]="mensajeError()"
+    >
+      {{ mensajeEstado() }}
+    </p>
   }
 </div>
