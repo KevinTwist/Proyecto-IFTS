@@ -20,7 +20,7 @@ El backend está desarrollado en **Node.js** con **Express** siguiendo una arqui
 
 ## 🛠️ Tecnologías Utilizadas
 
-* **FrontEnd:** Angular, Ionic UI Components, TypeScript.
+* **FrontEnd:** Angular, TypeScript.
 * **BackEnd:** Node.js, Express, JavaScript.
 * **Base de Datos:** SQL Server.
 * **Control de Versiones:** Git & GitHub.
@@ -50,20 +50,6 @@ El backend está desarrollado en **Node.js** con **Express** siguiendo una arqui
 ├── .gitignore
 └── README.md
 ```
-
----
-
-### 💡 Ideas para completar y pulir el README o el proyecto
-Si quieres dejar el proyecto impecable para la entrega, te sugiero sumar estos detalles que suelen valorar mucho en los profesorados técnicos:
-
-1. **Documentación de Endpoints (API Reference):** Agregar una pequeña tabla en el README especificando las rutas principales del BackEnd (método, ruta, descripción y ejemplo de body). Por ejemplo:
-   * `GET /api/turnos` -> Obtiene los turnos y horarios disponibles.
-   * `POST /api/turnos` -> Reserva un nuevo turno.
-2. **Manejo de Errores Middleware:** Asegurarte de tener un middleware centralizado en Express para capturar errores y devolver respuestas limpias en formato JSON con códigos HTTP correctos (`400`, `404`, `500`), y mencionarlo brevemente en la sección de arquitectura.
-3. **Variables de entorno (`.env.example`):** Subir un archivo `.env.example` al repositorio para que cualquier evaluador sepa exactamente qué variables de configuración (`DB_USER`, `DB_PASSWORD`, `DB_SERVER`, `DB_DATABASE`, `PORT`) necesita configurar sin adivinar.
-
----
-
 ⚙️ Funcionalidad y CRUD de Turnos
 Create (Reservar): Elegir un día en el calendario, seleccionar un horario disponible, completar los datos básicos del usuario y confirmar.
 Read (Consultar): Visualizar el calendario con los turnos existentes y los horarios disponibles en tiempo real.
